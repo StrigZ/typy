@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Uncom App Template
+Name[ru]=Шаблон приложения Uncom
+Exec=uncom-app-template
+Icon=uncom-app-template
+Terminal=false
+Type=Application
+NoDisplay=false
+Categories=Utility;

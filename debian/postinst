@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Update links to icons and mimes
+update-desktop-database /usr/share/applications
+update-mime-database /usr/share/mime
+update-icon-caches /usr/share/icons/hicolor
+
+# Add symbolik links to fuse to extend support of wide range of apps
+ln -s /bin/fusermount3 /usr/bin/fusermount
+ln -s /bin/fusermount3 /usr/bin/fusermount3
+
+exit 0
