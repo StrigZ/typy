@@ -1,5 +1,5 @@
-uncom-manager-appimage (1.0.0) andromeda; urgency=medium
+uncom-app-template (1.0.0) andromeda; urgency=medium
 
   * Initial release
 
- -- Developer 0 <developer0@uncom.tech>  Fri, 22 Nov 2024 18:51:55 +0300
+ -- Developer 0 <developer0@uncom.tech>  Fri, 03 Dec 2024 20:45:55 +0300
