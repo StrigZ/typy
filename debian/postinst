@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Bash-скрипт, который выполняется после успешной установки пакета. Здесь можно определить необходимые после установки действия, такие как настройка, добавление пользователей и т.д.
+
 # Update links to icons and mimes
 update-desktop-database /usr/share/applications
 update-mime-database /usr/share/mime
