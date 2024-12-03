@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Uncom App Template
 Name[ru]=Шаблон приложения Uncom
-Exec=uncom-app-template
+Exec=uncom-app-template -g
 Icon=uncom-app-template
 Terminal=false
 Type=Application

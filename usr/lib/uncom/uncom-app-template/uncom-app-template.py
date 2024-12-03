@@ -152,7 +152,7 @@ def show_success_message(window, title, message, callback):
 
 class Application(Adw.Application):
     def __init__(self):
-        super().__init__(application_id="com.uncom.app-template") # TODO: Define you app ID here
+        super().__init__(application_id="com.uncom.uncom-app-template") # TODO: Define you app ID here
         GLib.set_application_name(_("Uncomm App Template")) # TODO: Define you app window title here
 
     def do_activate(self):
