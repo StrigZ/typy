@@ -44,5 +44,5 @@ debuild -b -uc -us
 pygettext3 -d base -o usr/share/uncom/uncom-app-template/locale/ru/LC_MESSAGES/uncom-app-template.po usr/lib/uncom/uncom-app-template/uncom-app-template.py
 
 # Создание итогового MO файла, он бинарный, подгружается программой
-msgfmt base.pot --output-file usr/share/uncom/uncom-app-template/locale/ru/LC_MESSAGES/uncom-app-template.mo
+msgfmt usr/share/uncom/uncom-app-template/locale/ru/LC_MESSAGES/uncom-app-template.po --output-file usr/share/uncom/uncom-app-template/locale/ru/LC_MESSAGES/uncom-app-template.mo
 ```
