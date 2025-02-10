@@ -7,3 +7,4 @@ Terminal=false
 Type=Application
 NoDisplay=false
 Categories=Utility;
+StartupWMClass=com.uncom.uncom-app-template
