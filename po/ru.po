@@ -5,11 +5,12 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2024-12-03 20:24+0300\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2025-03-02 17:41+0300\n"
+"PO-Revision-Date: 2025-03-02 17:41+0300\n"
+"Last-Translator: Developer 002 <developer2@uncom.tech>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
+"Language: ru\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
@@ -17,45 +18,46 @@ msgstr ""
 
 #: usr/lib/uncom/uncom-app-template/uncom-app-template.py:34
 msgid "Uncom App Template"
-msgstr ""
+# translate to Russian
+msgstr "Шаблон приложения Uncom"
 
 #: usr/lib/uncom/uncom-app-template/uncom-app-template.py:66
 msgid "Here is some text with <b>different format</b> options."
-msgstr ""
+msgstr "Здесь текст с <b>различными вариантами форматирования</b>."
 
 #: usr/lib/uncom/uncom-app-template/uncom-app-template.py:73
 msgid "Show popup"
-msgstr ""
+msgstr "Показать всплывающее окно"
 
 #: usr/lib/uncom/uncom-app-template/uncom-app-template.py:79
 msgid "Start 3-sec process..."
-msgstr ""
+msgstr "Запустить процесс на 3 секунды..."
 
 #: usr/lib/uncom/uncom-app-template/uncom-app-template.py:98
 msgid "Dialogue Title"
-msgstr ""
+msgstr "Заголовок диалога"
 
 #: usr/lib/uncom/uncom-app-template/uncom-app-template.py:98
 msgid "Some message..."
-msgstr ""
+msgstr "Какое-то сообщение..."
 
 #: usr/lib/uncom/uncom-app-template/uncom-app-template.py:107
 msgid "Completed"
-msgstr ""
+msgstr "Завершено"
 
 #: usr/lib/uncom/uncom-app-template/uncom-app-template.py:107
 msgid "Long process completed successfully."
-msgstr ""
+msgstr "Длительный процесс успешно завершен."
 
 #: usr/lib/uncom/uncom-app-template/uncom-app-template.py:111
 msgid "Error during long process: "
-msgstr ""
+msgstr "Ошибка во время длительного процесса: "
 
 #: usr/lib/uncom/uncom-app-template/uncom-app-template.py:136
 msgid "Error"
-msgstr ""
+msgstr "Ошибка"
 
 #: usr/lib/uncom/uncom-app-template/uncom-app-template.py:156
 msgid "Uncomm App Template"
-msgstr ""
+msgstr "Шаблон приложения Uncomm"
 
