@@ -13,8 +13,7 @@ $ uncom-app-template -h
 * `usr/lib/uncom/заменить_на_новое_имя/заменить_на_новое_имя.py`- заменить директорию и сам скрипт (внутри скрипта заменить APP_ID программы, пути к файлам и другие упоминания шаблона)
 * `usr/share/icons/hicolor/_x_/apps/заменить_на_новое_имя.png` - заменить все иконки всех размеров
 * `usr/share/uncom/заменить_на_новое_имя` - заменить название директории с дополнительными файлами программы
-* `usr/share/uncom/заменить_на_новое_имя/locale/ru/LC_MESSAGES/заменить_на_новое_имя.mo` - заменить название файла локализации
-* `usr/share/uncom/заменить_на_новое_имя/locale/ru/LC_MESSAGES/заменить_на_новое_имя.po` - заменить название файла локализации
+* `/debian/rules` - заменить название пакета в правилах сборки
 
 По итогу замены нигде не должно остаться упоминания `uncom-app-template` - ни в именах файлов/директорий, ни внутри самих файлов.
 
@@ -41,8 +40,8 @@ debuild -b -uc -us
 Примеры команд для работы с текстами локализации:
 ```
 # Создание PO файла (в него надо вставить руками переводы всех строчек)
-pygettext3 -d base -o usr/share/uncom/uncom-app-template/locale/ru/LC_MESSAGES/uncom-app-template.po usr/lib/uncom/uncom-app-template/uncom-app-template.py
+pygettext3 -d base -o ru.po usr/lib/uncom/uncom-app-template/uncom-app-template.py
 
-# Создание итогового MO файла, он бинарный, подгружается программой
-msgfmt usr/share/uncom/uncom-app-template/locale/ru/LC_MESSAGES/uncom-app-template.po --output-file usr/share/uncom/uncom-app-template/locale/ru/LC_MESSAGES/uncom-app-template.mo
+Локализация из po файла в mo файл собирается автоматически при сборке пакета, но если надо собрать вручную, то вот команды для этого
+msgfmt po/ru.po --output-file usr/share/locale/ru/LC_MESSAGES/uncom-app-template.mo
 ```
