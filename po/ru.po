@@ -18,7 +18,6 @@ msgstr ""
 
 #: usr/lib/uncom/uncom-app-template/uncom-app-template.py:34
 msgid "Uncom App Template"
-# translate to Russian
 msgstr "Шаблон приложения Uncom"
 
 #: usr/lib/uncom/uncom-app-template/uncom-app-template.py:66
