@@ -22,7 +22,7 @@ from gi.repository import GLib, Gtk, Adw
 
 # This block is about localization (this is global path, will not work during local testing)
 text_domain = "uncom-app-template"
-gettext.bindtextdomain(text_domain, '/usr/share/uncom/uncom-app-template/locale')
+gettext.bindtextdomain(text_domain, '/usr/share/locale')
 gettext.textdomain(text_domain)
 _ = gettext.gettext
 
