@@ -57,6 +57,6 @@ msgid "Error"
 msgstr "Ошибка"
 
 #: usr/lib/uncom/uncom-app-template/uncom-app-template.py:156
-msgid "Uncomm App Template"
-msgstr "Шаблон приложения Uncomm"
+msgid "Uncom App Template"
+msgstr "Шаблон приложения Uncom"
 
