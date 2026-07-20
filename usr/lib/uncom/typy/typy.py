@@ -53,11 +53,7 @@ class WindowMain(Gtk.ApplicationWindow):
         key_controller.connect("key-pressed", self.on_key_pressed)
         self.add_controller(key_controller)
 
-        key_display_label = Gtk.Label()
-        key_display_label.set_text("Press a key...")
-        key_display_label.add_css_class("key-display")
-        self.key_display_label = key_display_label
-        main.append(self.key_display_label)
+
 
         string_to_type = "test" #TODO: replace with actual string logic
         self.string_to_type = string_to_type
@@ -71,6 +67,12 @@ class WindowMain(Gtk.ApplicationWindow):
         self.string_to_type_label = string_to_type_label
         main.append(self.string_to_type_label)
         self.update_string_to_type_highlights()
+
+        key_display_label = Gtk.Label()
+        key_display_label.set_text("Press a key...")
+        key_display_label.add_css_class("key-display")
+        self.key_display_label = key_display_label
+        main.append(self.key_display_label)
 
     def load_css(self):
         css_provider = Gtk.CssProvider()
