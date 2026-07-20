@@ -6,6 +6,7 @@ import os
 import random
 import sys
 from collections import defaultdict
+import json
 
 import gi
 
@@ -26,7 +27,26 @@ STYLE_CSS = os.path.join(APP_DIR, "style.css")
 
 COMMON_WORDS = ["the", "quick", "brown", "fox", "jumps", "over", "lazy", "dog"]
 
-missed_char_counts = defaultdict(int)
+
+STATS_FILE = os.path.join(GLib.get_user_data_dir(), "typy", "stats.json")
+
+
+def load_missed_char_counts():
+    try:
+        with open(STATS_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return defaultdict(int, data)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return defaultdict(int)
+
+
+def save_missed_char_counts(counts):
+    ensure_folder_exists(os.path.dirname(STATS_FILE))
+    with open(STATS_FILE, "w", encoding="utf-8") as f:
+        json.dump(counts, f)
+
+
+missed_char_counts = load_missed_char_counts()
 
 
 def generate_string(word_list, missed_char_counts, word_count=5):
@@ -166,6 +186,7 @@ class WindowMain(Gtk.ApplicationWindow):
         return True
 
     def restart(self):
+        save_missed_char_counts(missed_char_counts)
         self.string_to_type = self.generate_string_to_type()
         self.string_to_type_pointer = 0
         self.missed_keys_indices.clear()
@@ -181,6 +202,7 @@ class Application(Adw.Application):
     def __init__(self):
         super().__init__(application_id="com.uncom.typy")
         GLib.set_application_name(_("typy"))
+        self.connect("shutdown", lambda *a: save_missed_char_counts(missed_char_counts))
 
     def do_activate(self):
         window = WindowMain(application=self)
