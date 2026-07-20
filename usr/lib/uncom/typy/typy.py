@@ -17,18 +17,19 @@ import time
 from PIL import Image
 
 gi.require_version("Gtk", "4.0")
-gi.require_version('Adw', '1')
+gi.require_version("Adw", "1")
 from gi.repository import GLib, Gtk, Adw, Gdk
 
 # This block is about localization (this is global path, will not work during local testing)
 text_domain = "typy"
-gettext.bindtextdomain(text_domain, '/usr/share/locale')
+gettext.bindtextdomain(text_domain, "/usr/share/locale")
 gettext.textdomain(text_domain)
 _ = gettext.gettext
 
 
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
 STYLE_CSS = os.path.join(APP_DIR, "style.css")
+
 
 class WindowMain(Gtk.ApplicationWindow):
     def __init__(self, **kargs):
@@ -46,16 +47,16 @@ class WindowMain(Gtk.ApplicationWindow):
         self.set_child(main)
 
         # Visual container
-        self.visual_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        self.visual_container = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL, spacing=10
+        )
         main.append(self.visual_container)
 
         key_controller = Gtk.EventControllerKey()
         key_controller.connect("key-pressed", self.on_key_pressed)
         self.add_controller(key_controller)
 
-
-
-        string_to_type = "test" #TODO: replace with actual string logic
+        string_to_type = "test"  # TODO: replace with actual string logic
         self.string_to_type = string_to_type
         self.string_to_type_pointer = 0
 
@@ -80,7 +81,7 @@ class WindowMain(Gtk.ApplicationWindow):
         Gtk.StyleContext.add_provider_for_display(
             Gdk.Display.get_default(),
             css_provider,
-            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
         )
 
     def update_string_to_type_highlights(self):
@@ -108,7 +109,7 @@ class WindowMain(Gtk.ApplicationWindow):
 
         curr_char = self.string_to_type[self.string_to_type_pointer]
 
-        if (curr_char == char):
+        if curr_char == char:
             self.string_to_type_pointer += 1
             if self.string_to_type_pointer == len(self.string_to_type):
                 show_completion_popup(self, self.restart)
@@ -129,24 +130,26 @@ def _continue_after_message(dialog, callback):
     dialog.destroy()
     callback()
 
+
 def show_error_message(window, message, callback):
-        dialog = Gtk.MessageDialog(
-            transient_for=window,
-            message_type=Gtk.MessageType.ERROR,
-            buttons=Gtk.ButtonsType.OK,
-            text=_("Error"),
-            secondary_text=message
-        )
-        dialog.present()
-        dialog.connect("response", lambda *a: _continue_after_message(dialog, callback))
+    dialog = Gtk.MessageDialog(
+        transient_for=window,
+        message_type=Gtk.MessageType.ERROR,
+        buttons=Gtk.ButtonsType.OK,
+        text=_("Error"),
+        secondary_text=message,
+    )
+    dialog.present()
+    dialog.connect("response", lambda *a: _continue_after_message(dialog, callback))
+
 
 def show_completion_popup(window, callback_restart):
     dialog = Gtk.AlertDialog()
     dialog.set_message(_("Finished!"))
     dialog.set_detail(_("You completed the typing test."))
     dialog.set_buttons([_("Restart"), _("Close")])
-    dialog.set_default_button(0)   # Restart triggered by Enter
-    dialog.set_cancel_button(1)    # Close triggered by Escape
+    dialog.set_default_button(0)  # Restart triggered by Enter
+    dialog.set_cancel_button(1)  # Close triggered by Escape
 
     def on_response(source, result, *_data):
         try:
@@ -158,7 +161,6 @@ def show_completion_popup(window, callback_restart):
             callback_restart()
 
     dialog.choose(window, None, on_response)
-
 
 
 class Application(Adw.Application):
@@ -176,30 +178,36 @@ def ensure_folder_exists(path):
     if not os.path.exists(path):
         os.makedirs(path)
 
+
 # Supportive function to generate random string
 def generate_random_string(length=15):
     letters = string.ascii_lowercase
-    return ''.join(random.choice(letters) for i in range(length))
+    return "".join(random.choice(letters) for i in range(length))
 
 
 # Setup optional and mandatory launch arguments for command line
 parser = argparse.ArgumentParser(
     description="Uncom App Template demonstration application. Can be used via terminal and GUI.",
-    epilog="Start without parameters to view help.")
+    epilog="Start without parameters to view help.",
+)
 
-parser.add_argument('-g', '--gui', action='store_true', help='run with graphical UI, used for desktop sessions')
+parser.add_argument(
+    "-g",
+    "--gui",
+    action="store_true",
+    help="run with graphical UI, used for desktop sessions",
+)
 
 group = parser.add_mutually_exclusive_group(required=False)
-group.add_argument('-a', '--option-a', action='store_true', help='some option A')
-group.add_argument('-b', '--option-b', action='store_true', help='some option B')
+group.add_argument("-a", "--option-a", action="store_true", help="some option A")
+group.add_argument("-b", "--option-b", action="store_true", help="some option B")
 
 # Add line below if file path is mandatory argument
 # parser.add_argument('file_name', type=str, help="Path to some file")
 
 args = parser.parse_args()
 
-if args.gui: # run in GUI mode
-
+if args.gui:  # run in GUI mode
     # clear arguments so GTK will not trigger on them
     sys.argv = [sys.argv[0]]
 
@@ -212,12 +220,11 @@ if args.gui: # run in GUI mode
     exit_status = app.run(sys.argv)
     sys.exit(exit_status)
 
-else: # run in command line mode
-
+else:  # run in command line mode
     if args.option_a:
         print("Option A is given")
     elif args.option_b:
         print("Option B is given")
 
     # put any logic here for terminal way of usage
-    print ("This application does nothing...")
+    print("This application does nothing...")
