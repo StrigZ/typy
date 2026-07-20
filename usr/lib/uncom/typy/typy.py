@@ -1,44 +1,96 @@
 #!/usr/bin/python3
 
-import sys
 import argparse
-import gi
-import stat
-import subprocess
-import os
-import string
-import random
-import re
-import shutil
-import configparser
 import gettext
-import threading
-import time
-from PIL import Image
+import os
+import random
+import sys
+from collections import defaultdict
+
+import gi
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import GLib, Gtk, Adw, Gdk
+from gi.repository import Adw, Gdk, GLib, Gtk
 
-# This block is about localization (this is global path, will not work during local testing)
-text_domain = "typy"
-gettext.bindtextdomain(text_domain, "/usr/share/locale")
-gettext.textdomain(text_domain)
+# --- Localization ---
+# (this is a global path, will not work during local testing)
+TEXT_DOMAIN = "typy"
+gettext.bindtextdomain(TEXT_DOMAIN, "/usr/share/locale")
+gettext.textdomain(TEXT_DOMAIN)
 _ = gettext.gettext
 
-
+# --- Paths & constants ---
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
 STYLE_CSS = os.path.join(APP_DIR, "style.css")
+
+COMMON_WORDS = ["the", "quick", "brown", "fox", "jumps", "over", "lazy", "dog"]
+
+missed_char_counts = defaultdict(int)
+
+
+def generate_string(word_list, missed_char_counts, word_count=5):
+    """Pick word_count words, weighted toward ones containing
+    characters the user has historically mistyped."""
+
+    def word_weight(word):
+        return 1 + sum(missed_char_counts.get(c, 0) for c in word)
+
+    weights = [word_weight(w) for w in word_list]
+    chosen = random.choices(word_list, weights=weights, k=word_count)
+    return " ".join(chosen)
+
+
+def ensure_folder_exists(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+
+# --- Dialogs ---
+
+
+def show_completion_popup(window, callback_restart):
+    dialog = Gtk.AlertDialog()
+    dialog.set_message(_("Finished!"))
+    dialog.set_detail(_("You completed the typing test."))
+    dialog.set_buttons([_("Restart"), _("Close")])
+    dialog.set_default_button(0)  # Restart triggered by Enter
+    dialog.set_cancel_button(1)  # Close triggered by Escape
+
+    def on_response(source, result, *_data):
+        try:
+            button_index = dialog.choose_finish(result)
+        except GLib.Error:
+            return  # dismissed without a button (e.g. window closed)
+
+        if button_index == 0:
+            callback_restart()
+
+    dialog.choose(window, None, on_response)
+
+
+# --- Main window ---
 
 
 class WindowMain(Gtk.ApplicationWindow):
     def __init__(self, **kargs):
         super().__init__(**kargs, title=_("typy"))
-        self.load_css()
         self.set_resizable(False)
         self.set_default_size(500, 300)
 
-        # Common top level container
+        self.missed_keys_indices = set()
+        self.string_to_type = self.generate_string_to_type()
+        self.string_to_type_pointer = 0
+
+        self.load_css()
+        self._build_ui()
+        self.update_string_to_type_highlights()
+
+        key_controller = Gtk.EventControllerKey()
+        key_controller.connect("key-pressed", self.on_key_pressed)
+        self.add_controller(key_controller)
+
+    def _build_ui(self):
         main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         main.props.margin_start = 25
         main.props.margin_end = 25
@@ -46,28 +98,18 @@ class WindowMain(Gtk.ApplicationWindow):
         main.props.margin_bottom = 25
         self.set_child(main)
 
-        # Visual container
         self.visual_container = Gtk.Box(
             orientation=Gtk.Orientation.VERTICAL, spacing=10
         )
         main.append(self.visual_container)
 
-        key_controller = Gtk.EventControllerKey()
-        key_controller.connect("key-pressed", self.on_key_pressed)
-        self.add_controller(key_controller)
-
-        string_to_type = "test"  # TODO: replace with actual string logic
-        self.string_to_type = string_to_type
-        self.string_to_type_pointer = 0
-
-        self.missed_keys_indices = set()
-
         string_to_type_label = Gtk.Label()
         string_to_type_label.set_text(self.string_to_type)
         string_to_type_label.add_css_class("string-to-type")
+        string_to_type_label.props.wrap = True
+        string_to_type_label.props.justify = Gtk.Justification.CENTER
         self.string_to_type_label = string_to_type_label
         main.append(self.string_to_type_label)
-        self.update_string_to_type_highlights()
 
         key_display_label = Gtk.Label()
         key_display_label.set_text("Press a key...")
@@ -83,6 +125,9 @@ class WindowMain(Gtk.ApplicationWindow):
             css_provider,
             Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
         )
+
+    def generate_string_to_type(self):
+        return generate_string(COMMON_WORDS, missed_char_counts)
 
     def update_string_to_type_highlights(self):
         parts = []
@@ -115,52 +160,21 @@ class WindowMain(Gtk.ApplicationWindow):
                 show_completion_popup(self, self.restart)
         else:
             self.missed_keys_indices.add(self.string_to_type_pointer)
+            missed_char_counts[self.string_to_type[self.string_to_type_pointer]] += 1
 
         self.update_string_to_type_highlights()
         return True
 
     def restart(self):
+        self.string_to_type = self.generate_string_to_type()
         self.string_to_type_pointer = 0
         self.missed_keys_indices.clear()
         self.key_display_label.set_text("Press a key...")
         self.update_string_to_type_highlights()
+        print(missed_char_counts)
 
 
-def _continue_after_message(dialog, callback):
-    dialog.destroy()
-    callback()
-
-
-def show_error_message(window, message, callback):
-    dialog = Gtk.MessageDialog(
-        transient_for=window,
-        message_type=Gtk.MessageType.ERROR,
-        buttons=Gtk.ButtonsType.OK,
-        text=_("Error"),
-        secondary_text=message,
-    )
-    dialog.present()
-    dialog.connect("response", lambda *a: _continue_after_message(dialog, callback))
-
-
-def show_completion_popup(window, callback_restart):
-    dialog = Gtk.AlertDialog()
-    dialog.set_message(_("Finished!"))
-    dialog.set_detail(_("You completed the typing test."))
-    dialog.set_buttons([_("Restart"), _("Close")])
-    dialog.set_default_button(0)  # Restart triggered by Enter
-    dialog.set_cancel_button(1)  # Close triggered by Escape
-
-    def on_response(source, result, *_data):
-        try:
-            button_index = dialog.choose_finish(result)
-        except GLib.Error:
-            return  # dialog dismissed without a button (rare, e.g. window closed)
-
-        if button_index == 0:
-            callback_restart()
-
-    dialog.choose(window, None, on_response)
+# --- Application ---
 
 
 class Application(Adw.Application):
@@ -173,58 +187,41 @@ class Application(Adw.Application):
         window.present()
 
 
-# Supportive function to make sure path exists
-def ensure_folder_exists(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
+# --- CLI entry point ---
 
 
-# Supportive function to generate random string
-def generate_random_string(length=15):
-    letters = string.ascii_lowercase
-    return "".join(random.choice(letters) for i in range(length))
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Uncom App Template demonstration application. Can be used via terminal and GUI.",
+        epilog="Start without parameters to view help.",
+    )
+    parser.add_argument(
+        "-g",
+        "--gui",
+        action="store_true",
+        help="run with graphical UI, used for desktop sessions",
+    )
+    group = parser.add_mutually_exclusive_group(required=False)
+    group.add_argument("-a", "--option-a", action="store_true", help="some option A")
+    group.add_argument("-b", "--option-b", action="store_true", help="some option B")
+    return parser.parse_args()
 
 
-# Setup optional and mandatory launch arguments for command line
-parser = argparse.ArgumentParser(
-    description="Uncom App Template demonstration application. Can be used via terminal and GUI.",
-    epilog="Start without parameters to view help.",
-)
-
-parser.add_argument(
-    "-g",
-    "--gui",
-    action="store_true",
-    help="run with graphical UI, used for desktop sessions",
-)
-
-group = parser.add_mutually_exclusive_group(required=False)
-group.add_argument("-a", "--option-a", action="store_true", help="some option A")
-group.add_argument("-b", "--option-b", action="store_true", help="some option B")
-
-# Add line below if file path is mandatory argument
-# parser.add_argument('file_name', type=str, help="Path to some file")
-
-args = parser.parse_args()
-
-if args.gui:  # run in GUI mode
-    # clear arguments so GTK will not trigger on them
-    sys.argv = [sys.argv[0]]
+def main():
+    args = parse_args()
 
     if args.option_a:
         print("Option A is given")
     elif args.option_b:
         print("Option B is given")
 
-    app = Application()
-    exit_status = app.run(sys.argv)
-    sys.exit(exit_status)
+    if args.gui:
+        sys.argv = [sys.argv[0]]  # clear args so GTK doesn't parse them too
+        app = Application()
+        sys.exit(app.run(sys.argv))
+    else:
+        print("This application does nothing...")
 
-else:  # run in command line mode
-    if args.option_a:
-        print("Option A is given")
-    elif args.option_b:
-        print("Option B is given")
 
-    # put any logic here for terminal way of usage
-    print("This application does nothing...")
+if __name__ == "__main__":
+    main()
