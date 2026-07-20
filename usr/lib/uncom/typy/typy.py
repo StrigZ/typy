@@ -59,6 +59,19 @@ class WindowMain(Gtk.ApplicationWindow):
         self.key_display_label = key_display_label
         main.append(self.key_display_label)
 
+        string_to_type = "test" #TODO: replace with actual string logic
+        self.string_to_type = string_to_type
+        self.string_to_type_pointer = 0
+
+        self.missed_keys_indices = set()
+
+        string_to_type_label = Gtk.Label()
+        string_to_type_label.set_text(self.string_to_type)
+        string_to_type_label.add_css_class("string-to-type")
+        self.string_to_type_label = string_to_type_label
+        main.append(self.string_to_type_label)
+        self.update_string_to_type_highlights()
+
     def load_css(self):
         css_provider = Gtk.CssProvider()
         css_provider.load_from_path(STYLE_CSS)
@@ -68,25 +81,37 @@ class WindowMain(Gtk.ApplicationWindow):
             Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         )
 
-    def show_spinner(self):
-        self.spinner = Gtk.Spinner()
-        self.spinner.props.vexpand = True
-        self.visual_container.remove(self.picture)
-        self.visual_container.append(self.spinner)
-        self.spinner.start()
+    def update_string_to_type_highlights(self):
+        parts = []
+        for i, ch in enumerate(self.string_to_type):
+            escaped = GLib.markup_escape_text(ch)
+            if i < self.string_to_type_pointer:
+                color = "#e53935" if i in self.missed_keys_indices else "#4caf50"
+            else:
+                color = "#888888"
+            parts.append(f'<span foreground="{color}">{escaped}</span>')
 
-    def hide_spinner(self):
-        self.spinner.stop()
-        self.visual_container.remove(self.spinner)
-        self.visual_container.append(self.picture)
+        self.string_to_type_label.set_markup("".join(parts))
 
     def on_key_pressed(self, controller, keyval, keycode, state):
+        if self.string_to_type_pointer >= len(self.string_to_type):
+            return True
+
         unicode_val = Gdk.keyval_to_unicode(keyval)
-        if unicode_val:
-            char = chr(unicode_val)
-            self.key_display_label.set_text(char)
+        if not unicode_val:
+            return True  # ignore non-printable keys (Shift, Escape, arrows, etc.)
+
+        char = chr(unicode_val)
+        self.key_display_label.set_text(char)
+
+        curr_char = self.string_to_type[self.string_to_type_pointer]
+
+        if (curr_char == char):
+            self.string_to_type_pointer += 1
         else:
-            self.key_display_label.set_text(Gdk.keyval_name(keyval))
+            self.missed_keys_indices.add(self.string_to_type_pointer)
+
+        self.update_string_to_type_highlights()
         return True
 
     def on_click_show_popup(self, _button):
@@ -150,8 +175,8 @@ def show_success_message(window, title, message, callback):
 
 class Application(Adw.Application):
     def __init__(self):
-        super().__init__(application_id="com.uncom.typy") # TODO: Define you app ID here
-        GLib.set_application_name(_("typy")) # TODO: Define you app window title here
+        super().__init__(application_id="com.uncom.typy")
+        GLib.set_application_name(_("typy"))
 
     def do_activate(self):
         window = WindowMain(application=self)
