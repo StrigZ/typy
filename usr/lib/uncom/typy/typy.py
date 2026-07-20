@@ -18,7 +18,7 @@ from PIL import Image
 
 gi.require_version("Gtk", "4.0")
 gi.require_version('Adw', '1')
-from gi.repository import GLib, Gtk, Adw
+from gi.repository import GLib, Gtk, Adw, Gdk
 
 # This block is about localization (this is global path, will not work during local testing)
 text_domain = "typy"
@@ -26,12 +26,14 @@ gettext.bindtextdomain(text_domain, '/usr/share/locale')
 gettext.textdomain(text_domain)
 _ = gettext.gettext
 
-# Define global links to resources here (this is global path, will not work during local testing)
-CUSTOM_IMAGE = "/usr/share/uncom/typy/content/image.png"
+
+APP_DIR = os.path.dirname(os.path.abspath(__file__))
+STYLE_CSS = os.path.join(APP_DIR, "style.css")
 
 class WindowMain(Gtk.ApplicationWindow):
     def __init__(self, **kargs):
         super().__init__(**kargs, title=_("typy"))
+        self.load_css()
         self.set_resizable(False)
         self.set_default_size(500, 300)
 
@@ -47,39 +49,24 @@ class WindowMain(Gtk.ApplicationWindow):
         self.visual_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         main.append(self.visual_container)
 
-        # Message container
-        horizontal_message = Gtk.Box(spacing=10)
-        main.append(horizontal_message)
+        key_controller = Gtk.EventControllerKey()
+        key_controller.connect("key-pressed", self.on_key_pressed)
+        self.add_controller(key_controller)
 
-        # Buttons container
-        horiontal_buttons = Gtk.Box(spacing=10)
-        horiontal_buttons.props.margin_top = 25
-        main.append(horiontal_buttons)
+        key_display_label = Gtk.Label()
+        key_display_label.set_text("Press a key...")
+        key_display_label.add_css_class("key-display")
+        self.key_display_label = key_display_label
+        main.append(self.key_display_label)
 
-        # Image (put it in Visual container)
-        self.picture = Gtk.Picture.new_for_filename(CUSTOM_IMAGE)
-        self.picture.props.vexpand = True
-        self.visual_container.append(self.picture)
-
-        # Messages (put it in Message container)
-        label_message = Gtk.Label()
-        label_message.set_markup(_("Here is some text with <b>different format</b> options."))
-        label_message.props.justify = Gtk.Justification.CENTER
-        label_message.props.wrap = True
-        label_message.props.hexpand = True
-        horizontal_message.append(label_message)
-
-        # Left button (put it in Buttons container)
-        self.button_l = Gtk.Button.new_with_label(_("Show popup"))
-        self.button_l.connect('clicked', self.on_click_show_popup)
-        self.button_l.props.hexpand = True
-        horiontal_buttons.append(self.button_l)
-
-        # Right button (put it in Buttons container)
-        self.button_r = Gtk.Button.new_with_mnemonic(_("Start 3-sec process..."))
-        self.button_r.connect('clicked', self.on_click_long_process)
-        self.button_r.props.hexpand = True
-        horiontal_buttons.append(self.button_r)
+    def load_css(self):
+        css_provider = Gtk.CssProvider()
+        css_provider.load_from_path(STYLE_CSS)
+        Gtk.StyleContext.add_provider_for_display(
+            Gdk.Display.get_default(),
+            css_provider,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
 
     def show_spinner(self):
         self.spinner = Gtk.Spinner()
@@ -92,6 +79,15 @@ class WindowMain(Gtk.ApplicationWindow):
         self.spinner.stop()
         self.visual_container.remove(self.spinner)
         self.visual_container.append(self.picture)
+
+    def on_key_pressed(self, controller, keyval, keycode, state):
+        unicode_val = Gdk.keyval_to_unicode(keyval)
+        if unicode_val:
+            char = chr(unicode_val)
+            self.key_display_label.set_text(char)
+        else:
+            self.key_display_label.set_text(Gdk.keyval_name(keyval))
+        return True
 
     def on_click_show_popup(self, _button):
         # Notice, that buttons from main window will be still clickable
@@ -149,6 +145,8 @@ def show_success_message(window, title, message, callback):
         )
         dialog.present()
         dialog.connect("response", lambda *a: _continue_after_message(dialog, callback))
+
+
 
 class Application(Adw.Application):
     def __init__(self):
