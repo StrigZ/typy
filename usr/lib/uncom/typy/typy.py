@@ -110,41 +110,19 @@ class WindowMain(Gtk.ApplicationWindow):
 
         if (curr_char == char):
             self.string_to_type_pointer += 1
+            if self.string_to_type_pointer == len(self.string_to_type):
+                show_completion_popup(self, self.restart)
         else:
             self.missed_keys_indices.add(self.string_to_type_pointer)
 
         self.update_string_to_type_highlights()
         return True
 
-    def on_click_show_popup(self, _button):
-        # Notice, that buttons from main window will be still clickable
-        show_success_message(self, _("Dialogue Title"), _("Some message..."), lambda *a: None)
-
-    def on_click_long_process(self, _button):
-        self.button_l.set_sensitive(False)
-        self.button_r.set_sensitive(False)
-        self.show_spinner()
-
-        def on_task_complete():
-            self.hide_spinner()
-            show_success_message(self, _("Completed"), _("Long process completed successfully."), lambda *a: exit())
-
-        def on_task_error():
-            self.hide_spinner()
-            show_error_message(self, _("Error during long process: ") + str(self.err), lambda *a: exit())
-
-        def do_long_process():
-            try:
-                # Here is some long process, this time it is just fake 3 seconds sleep delay
-                time.sleep(3)
-            except Exception as err:
-                self.err = err
-                GLib.idle_add(on_task_error)
-            else:
-                GLib.idle_add(on_task_complete)
-
-        thread = threading.Thread(target=do_long_process)
-        thread.start()
+    def restart(self):
+        self.string_to_type_pointer = 0
+        self.missed_keys_indices.clear()
+        self.key_display_label.set_text("Press a key...")
+        self.update_string_to_type_highlights()
 
 
 def _continue_after_message(dialog, callback):
