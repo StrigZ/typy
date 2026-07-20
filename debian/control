@@ -1,15 +1,17 @@
-Source: uncom-app-template
+Source: typy
 Section: admin
-Build-Depends:  debhelper-compat (= 12),
-                debhelper (>= 7),
-		        python3 (>= 3.3)
+Build-Depends: debhelper-compat (= 12),
+               debhelper (>= 7),
+               python3 (>= 3.3)
 Maintainer: Developer 0 <developer0@uncom.tech>
 Standards-Version: 4.5.1
 Priority: optional
 
-Package: uncom-app-template
+Package: typy
 Architecture: all
 Depends: python3 (>= 3.3),
+         desktop-file-utils,
          ${misc:Depends}
 Description: Uncom OS App Template.
-  
+ A simple GTK4 application template with console launch support.
+ Provides a starting point for building GTK4 apps under Uncom OS.

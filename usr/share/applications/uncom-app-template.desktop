@@ -1,10 +1,10 @@
 [Desktop Entry]
-Name=Uncom App Template
+Name=typy
 Name[ru]=Шаблон приложения Uncom
-Exec=uncom-app-template -g
-Icon=uncom-app-template
+Exec=typy -g
+Icon=typy
 Terminal=false
 Type=Application
 NoDisplay=false
 Categories=Utility;
-StartupWMClass=com.uncom.uncom-app-template
+StartupWMClass=com.uncom.typy

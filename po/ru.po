@@ -15,48 +15,43 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 
-
-#: usr/lib/uncom/uncom-app-template/uncom-app-template.py:34
-msgid "Uncom App Template"
+#: usr/lib/uncom/typy/typy.py:34 usr/lib/uncom/typy/typy.py:156
+msgid "typy"
 msgstr "Шаблон приложения Uncom"
 
-#: usr/lib/uncom/uncom-app-template/uncom-app-template.py:66
+#: usr/lib/uncom/typy/typy.py:66
 msgid "Here is some text with <b>different format</b> options."
 msgstr "Здесь текст с <b>различными вариантами форматирования</b>."
 
-#: usr/lib/uncom/uncom-app-template/uncom-app-template.py:73
+#: usr/lib/uncom/typy/typy.py:73
 msgid "Show popup"
 msgstr "Показать всплывающее окно"
 
-#: usr/lib/uncom/uncom-app-template/uncom-app-template.py:79
+#: usr/lib/uncom/typy/typy.py:79
 msgid "Start 3-sec process..."
 msgstr "Запустить процесс на 3 секунды..."
 
-#: usr/lib/uncom/uncom-app-template/uncom-app-template.py:98
+#: usr/lib/uncom/typy/typy.py:98
 msgid "Dialogue Title"
 msgstr "Заголовок диалога"
 
-#: usr/lib/uncom/uncom-app-template/uncom-app-template.py:98
+#: usr/lib/uncom/typy/typy.py:98
 msgid "Some message..."
 msgstr "Какое-то сообщение..."
 
-#: usr/lib/uncom/uncom-app-template/uncom-app-template.py:107
+#: usr/lib/uncom/typy/typy.py:107
 msgid "Completed"
 msgstr "Завершено"
 
-#: usr/lib/uncom/uncom-app-template/uncom-app-template.py:107
+#: usr/lib/uncom/typy/typy.py:107
 msgid "Long process completed successfully."
 msgstr "Длительный процесс успешно завершен."
 
-#: usr/lib/uncom/uncom-app-template/uncom-app-template.py:111
+#: usr/lib/uncom/typy/typy.py:111
 msgid "Error during long process: "
 msgstr "Ошибка во время длительного процесса: "
 
-#: usr/lib/uncom/uncom-app-template/uncom-app-template.py:136
+#: usr/lib/uncom/typy/typy.py:136
 msgid "Error"
 msgstr "Ошибка"
-
-#: usr/lib/uncom/uncom-app-template/uncom-app-template.py:156
-msgid "Uncom App Template"
-msgstr "Шаблон приложения Uncom"
 

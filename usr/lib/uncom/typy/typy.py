@@ -21,20 +21,20 @@ gi.require_version('Adw', '1')
 from gi.repository import GLib, Gtk, Adw
 
 # This block is about localization (this is global path, will not work during local testing)
-text_domain = "uncom-app-template"
+text_domain = "typy"
 gettext.bindtextdomain(text_domain, '/usr/share/locale')
 gettext.textdomain(text_domain)
 _ = gettext.gettext
 
 # Define global links to resources here (this is global path, will not work during local testing)
-CUSTOM_IMAGE = "/usr/share/uncom/uncom-app-template/content/image.png"
+CUSTOM_IMAGE = "/usr/share/uncom/typy/content/image.png"
 
 class WindowMain(Gtk.ApplicationWindow):
     def __init__(self, **kargs):
-        super().__init__(**kargs, title=_("Uncom App Template"))
+        super().__init__(**kargs, title=_("typy"))
         self.set_resizable(False)
         self.set_default_size(500, 300)
-        
+
         # Common top level container
         main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         main.props.margin_start = 25
@@ -105,7 +105,7 @@ class WindowMain(Gtk.ApplicationWindow):
         def on_task_complete():
             self.hide_spinner()
             show_success_message(self, _("Completed"), _("Long process completed successfully."), lambda *a: exit())
-        
+
         def on_task_error():
             self.hide_spinner()
             show_error_message(self, _("Error during long process: ") + str(self.err), lambda *a: exit())
@@ -152,8 +152,8 @@ def show_success_message(window, title, message, callback):
 
 class Application(Adw.Application):
     def __init__(self):
-        super().__init__(application_id="com.uncom.uncom-app-template") # TODO: Define you app ID here
-        GLib.set_application_name(_("Uncom App Template")) # TODO: Define you app window title here
+        super().__init__(application_id="com.uncom.typy") # TODO: Define you app ID here
+        GLib.set_application_name(_("typy")) # TODO: Define you app window title here
 
     def do_activate(self):
         window = WindowMain(application=self)
@@ -188,10 +188,10 @@ group.add_argument('-b', '--option-b', action='store_true', help='some option B'
 args = parser.parse_args()
 
 if args.gui: # run in GUI mode
-    
+
     # clear arguments so GTK will not trigger on them
     sys.argv = [sys.argv[0]]
-    
+
     if args.option_a:
         print("Option A is given")
     elif args.option_b:
@@ -202,7 +202,7 @@ if args.gui: # run in GUI mode
     sys.exit(exit_status)
 
 else: # run in command line mode
-    
+
     if args.option_a:
         print("Option A is given")
     elif args.option_b:
