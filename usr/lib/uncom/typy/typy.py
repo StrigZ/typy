@@ -160,16 +160,24 @@ def show_error_message(window, message, callback):
         dialog.present()
         dialog.connect("response", lambda *a: _continue_after_message(dialog, callback))
 
-def show_success_message(window, title, message, callback):
-        dialog = Gtk.MessageDialog(
-            transient_for=window,
-            message_type=Gtk.MessageType.INFO,
-            buttons=Gtk.ButtonsType.OK,
-            text=title,
-            secondary_text=message
-        )
-        dialog.present()
-        dialog.connect("response", lambda *a: _continue_after_message(dialog, callback))
+def show_completion_popup(window, callback_restart):
+    dialog = Gtk.AlertDialog()
+    dialog.set_message(_("Finished!"))
+    dialog.set_detail(_("You completed the typing test."))
+    dialog.set_buttons([_("Restart"), _("Close")])
+    dialog.set_default_button(0)   # Restart triggered by Enter
+    dialog.set_cancel_button(1)    # Close triggered by Escape
+
+    def on_response(source, result, *_data):
+        try:
+            button_index = dialog.choose_finish(result)
+        except GLib.Error:
+            return  # dialog dismissed without a button (rare, e.g. window closed)
+
+        if button_index == 0:
+            callback_restart()
+
+    dialog.choose(window, None, on_response)
 
 
 
