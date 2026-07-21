@@ -24,11 +24,9 @@ _ = gettext.gettext
 # --- Paths & constants ---
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
 STYLE_CSS = os.path.join(APP_DIR, "style.css")
+STATS_FILE = os.path.join(GLib.get_user_data_dir(), "typy", "stats.json")
 
 COMMON_WORDS = ["the", "quick", "brown", "fox", "jumps", "over", "lazy", "dog"]
-
-
-STATS_FILE = os.path.join(GLib.get_user_data_dir(), "typy", "stats.json")
 
 
 def load_missed_char_counts():
@@ -44,6 +42,12 @@ def save_missed_char_counts(counts):
     ensure_folder_exists(os.path.dirname(STATS_FILE))
     with open(STATS_FILE, "w", encoding="utf-8") as f:
         json.dump(counts, f)
+
+
+def reset_missed_char_counts():
+    missed_char_counts.clear()
+    if os.path.exists(STATS_FILE):
+        os.remove(STATS_FILE)
 
 
 missed_char_counts = load_missed_char_counts()
@@ -136,6 +140,14 @@ class WindowMain(Gtk.ApplicationWindow):
         key_display_label.add_css_class("key-display")
         self.key_display_label = key_display_label
         main.append(self.key_display_label)
+
+        reset_stats_button = Gtk.Button(label=_("Reset stats"))
+        reset_stats_button.connect("clicked", lambda _btn: self.reset_stats())
+        main.append(reset_stats_button)
+
+    def reset_stats(self):
+        reset_missed_char_counts()
+        self.restart()
 
     def load_css(self):
         css_provider = Gtk.CssProvider()
