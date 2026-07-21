@@ -4,3 +4,6 @@ debian/*.log
 debian/*.substvars
 debian/files
 debian/debhelper-build-stamp
+
+__pycache__/
+*.pyc
