@@ -78,11 +78,17 @@ class TypingField(Gtk.Overlay):
         parts = []
         for i, ch in enumerate(self.string_to_type):
             escaped = GLib.markup_escape_text(ch)
+
             if i < self.string_to_type_pointer:
                 color = "#e53935" if i in self.missed_keys_indices else "#4caf50"
+                parts.append(f'<span foreground="{color}">{escaped}</span>')
+            elif i == self.string_to_type_pointer:
+                parts.append(
+                    f'<span foreground="#888888" underline="single">{escaped}</span>'
+                )
             else:
-                color = "#888888"
-            parts.append(f'<span foreground="{color}">{escaped}</span>')
+                parts.append(f'<span foreground="#888888">{escaped}</span>')
+
         self.string_to_type_label.set_markup("".join(parts))
 
     def on_key_pressed(self, controller, keyval, keycode, state):
