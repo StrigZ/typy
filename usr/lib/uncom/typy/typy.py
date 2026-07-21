@@ -130,8 +130,12 @@ class WindowMain(Gtk.ApplicationWindow):
 
         key_controller = Gtk.EventControllerKey()
         key_controller.connect("key-pressed", self.on_key_pressed)
-        key_controller.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
-        self.add_controller(key_controller)
+        self.typing_field.add_controller(key_controller)
+
+        activate_controller = Gtk.EventControllerKey()
+        activate_controller.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
+        activate_controller.connect("key-pressed", self.on_activate_key)
+        self.add_controller(activate_controller)
 
     def _build_ui(self):
         main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
@@ -152,21 +156,78 @@ class WindowMain(Gtk.ApplicationWindow):
         string_to_type_label.props.wrap = True
         string_to_type_label.props.justify = Gtk.Justification.CENTER
         self.string_to_type_label = string_to_type_label
-        main.append(self.string_to_type_label)
 
         key_display_label = Gtk.Label()
-        key_display_label.set_text("Press a key...")
         key_display_label.add_css_class("key-display")
         self.key_display_label = key_display_label
-        main.append(self.key_display_label)
+
+        self.typing_field = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL,
+            spacing=10,
+            focusable=True,
+            css_classes=["typing-field"],
+        )
+
+        self.typing_field.append(self.string_to_type_label)
+        self.typing_field.append(self.key_display_label)
+
+        focus_controller = Gtk.EventControllerFocus()
+        focus_controller.connect("enter", lambda *a: self.on_focus_enter())
+        focus_controller.connect("leave", lambda *a: self.on_focus_leave())
+        self.typing_field.add_controller(focus_controller)
+
+        self.activate_hint_label = Gtk.Label(
+            label=_("Click or press Enter to start typing"),
+            valign=Gtk.Align.CENTER,
+            halign=Gtk.Align.CENTER,
+            css_classes=["dim-label"],
+        )
+
+        overlay = Gtk.Overlay(
+            child=self.typing_field,
+        )
+        overlay.add_overlay(self.activate_hint_label)
+        main.append(overlay)
+
+        activate_typing_click_gesture = Gtk.GestureClick()
+        activate_typing_click_gesture.connect("pressed", self.on_typing_field_clicked)
+        overlay.add_controller(activate_typing_click_gesture)
+
+        deactivate_typing_click_gesture = Gtk.GestureClick()
+        deactivate_typing_click_gesture.connect(
+            "pressed", lambda *a: self.set_focus(None)
+        )
+        main.add_controller(deactivate_typing_click_gesture)
 
         settings_button = Gtk.Button(label=_("Settings"))
         settings_button.connect("clicked", lambda *a: show_settings(self))
         main.append(settings_button)
 
+    def on_typing_field_clicked(self, gesture, n_press, x, y):
+        self.typing_field.grab_focus()
+        gesture.set_state(Gtk.EventSequenceState.CLAIMED)
+
+    def on_focus_enter(self):
+        self.typing_field.add_css_class("active")
+        self.activate_hint_label.set_visible(False)
+
+    def on_focus_leave(self):
+        self.typing_field.remove_css_class("active")
+        self.activate_hint_label.set_visible(True)
+        self.reset_current_string()
+
+    def on_activate_key(self, controller, keyval, keycode, state):
+        if (
+            keyval in (Gdk.KEY_Return, Gdk.KEY_KP_Enter)
+            and not self.typing_field.is_focus()
+        ):
+            self.typing_field.grab_focus()
+            return True  # consume so it doesn't also reach whatever was focused before
+        return False
+
     def reset_stats(self):
         reset_missed_char_counts()
-        self.restart()
+        self.start_new_string()
 
     def load_css(self):
         css_provider = Gtk.CssProvider()
@@ -216,12 +277,15 @@ class WindowMain(Gtk.ApplicationWindow):
         self.update_string_to_type_highlights()
         return True
 
-    def restart(self):
+    def start_new_string(self):
         save_missed_char_counts(missed_char_counts)
         self.string_to_type = self.generate_string_to_type()
+        self.reset_current_string()
+
+    def reset_current_string(self):
         self.string_to_type_pointer = 0
         self.missed_keys_indices.clear()
-        self.key_display_label.set_text("Press a key...")
+        self.key_display_label.set_text("")
         self.update_string_to_type_highlights()
         print(missed_char_counts)
 
