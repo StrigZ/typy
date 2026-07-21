@@ -130,6 +130,7 @@ class WindowMain(Gtk.ApplicationWindow):
 
         key_controller = Gtk.EventControllerKey()
         key_controller.connect("key-pressed", self.on_key_pressed)
+        key_controller.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
         self.add_controller(key_controller)
 
     def _build_ui(self):
