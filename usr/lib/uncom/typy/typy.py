@@ -93,6 +93,24 @@ def show_completion_popup(window, callback_restart):
     dialog.choose(window, None, on_response)
 
 
+def show_settings(window):
+    dialog = Adw.PreferencesDialog()
+
+    page = Adw.PreferencesPage()
+    dialog.add(page)
+
+    group = Adw.PreferencesGroup(title=_("Typing"))
+    page.add(group)
+
+    reset_row = Adw.ActionRow(title=_("Reset stats"))
+    reset_button = Gtk.Button(label=_("Reset"), valign=Gtk.Align.CENTER)
+    reset_button.connect("clicked", lambda *a: reset_missed_char_counts())
+    reset_row.add_suffix(reset_button)
+    group.add(reset_row)
+
+    dialog.present(window)
+
+
 # --- Main window ---
 
 
@@ -141,9 +159,9 @@ class WindowMain(Gtk.ApplicationWindow):
         self.key_display_label = key_display_label
         main.append(self.key_display_label)
 
-        reset_stats_button = Gtk.Button(label=_("Reset stats"))
-        reset_stats_button.connect("clicked", lambda _btn: self.reset_stats())
-        main.append(reset_stats_button)
+        settings_button = Gtk.Button(label=_("Settings"))
+        settings_button.connect("clicked", lambda *a: show_settings(self))
+        main.append(settings_button)
 
     def reset_stats(self):
         reset_missed_char_counts()
