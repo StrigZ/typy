@@ -8,7 +8,7 @@ class TypingField(Gtk.Overlay):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.set_focusable(True)
-        self.add_css_class("typing-field")
+        self.add_css_class("typing-field-container")
 
         self.missed_keys_indices = set()
         self.string_to_type = self.generate_string_to_type()
@@ -31,7 +31,11 @@ class TypingField(Gtk.Overlay):
         self.add_controller(click_gesture)
 
     def _build_ui(self):
-        content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        content = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL,
+            spacing=10,
+            css_classes=["typing-field"],
+        )
 
         self.string_to_type_label = Gtk.Label()
         self.string_to_type_label.set_text(self.string_to_type)

@@ -4,8 +4,13 @@
     position: relative;
 }
 
-.typing-field.active {
-    filter: blur(0)
+.typing-field-container.active .typing-field {
+    filter: blur(0);
+
+}
+
+.typing-field-container.active .key-display {
+    text-transform: uppercase;
 }
 
 .string-to-type {
@@ -18,6 +23,3 @@
     font-weight: bold;
 }
 
-.typing-field.active  .key-display {
-    text-transform: uppercase;
-}
