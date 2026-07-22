@@ -7,3 +7,6 @@ debian/debhelper-build-stamp
 
 __pycache__/
 *.pyc
+
+.ruff_cache
+
