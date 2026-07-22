@@ -37,15 +37,13 @@ class TypingField(Gtk.Overlay):
             css_classes=["typing-field"],
         )
 
-        self.string_to_type_label = Gtk.Label()
+        self.string_to_type_label = Gtk.Label(
+            css_classes=["string-to-type"], wrap=True, justify=Gtk.Justification.CENTER
+        )
         self.string_to_type_label.set_text(self.string_to_type)
-        self.string_to_type_label.add_css_class("string-to-type")
-        self.string_to_type_label.props.wrap = True
-        self.string_to_type_label.props.justify = Gtk.Justification.CENTER
         content.append(self.string_to_type_label)
 
-        self.key_display_label = Gtk.Label()
-        self.key_display_label.add_css_class("key-display")
+        self.key_display_label = Gtk.Label(css_classes=["key-display"])
         content.append(self.key_display_label)
 
         self.set_child(content)
