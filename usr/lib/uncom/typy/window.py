@@ -16,7 +16,7 @@ class WindowMain(Gtk.ApplicationWindow):
 
         activate_controller = Gtk.EventControllerKey()
         activate_controller.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
-        activate_controller.connect("key-pressed", self.on_activate_key)
+        activate_controller.connect("key-pressed", self.on_activate_key_pressed)
         self.add_controller(activate_controller)
 
     def _build_ui(self):
@@ -38,7 +38,7 @@ class WindowMain(Gtk.ApplicationWindow):
         settings_button.connect("clicked", lambda *a: show_settings(self))
         main.append(settings_button)
 
-    def on_activate_key(self, controller, keyval, keycode, state):
+    def on_activate_key_pressed(self, controller, keyval, keycode, state):
         if (
             keyval in (Gdk.KEY_Return, Gdk.KEY_KP_Enter)
             and not self.typing_field.is_focus()
