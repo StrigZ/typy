@@ -113,6 +113,7 @@ class TypingField(Gtk.Overlay):
             self.missed_keys_indices.add(self.string_to_type_pointer)
             self.char_stats.record_miss(curr_char)
 
+        self.char_stats.record_sample(curr_char)
         self.update_highlights()
         return True
 

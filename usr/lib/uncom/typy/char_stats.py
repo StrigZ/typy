@@ -18,6 +18,13 @@ class CharStats:
     def __init__(self):
         self.data: dict[str, CharStat] = self._load_data()
 
+    def record_sample(self, char: str):
+        if char not in self.data:
+            self._add_new_char(char)
+
+        self.data[char]["samples"] += 1
+        self.save_data()
+
     def record_miss(self, char: str):
         if char not in self.data:
             self._add_new_char(char)
