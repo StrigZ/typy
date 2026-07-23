@@ -1,7 +1,6 @@
 from gi.repository import Adw, GLib, Gtk
 
 from constants import _
-from stats import reset_missed_char_counts
 
 
 def show_completion_popup(window, callback_restart):
@@ -33,7 +32,7 @@ def show_settings(window):
 
     reset_row = Adw.ActionRow(title=_("Reset stats"))
     reset_button = Gtk.Button(label=_("Reset"), valign=Gtk.Align.CENTER)
-    reset_button.connect("clicked", lambda *a: reset_missed_char_counts())
+    reset_button.connect("clicked", lambda *a: window.char_stats.reset_data())
     reset_row.add_suffix(reset_button)
     group.add(reset_row)
 

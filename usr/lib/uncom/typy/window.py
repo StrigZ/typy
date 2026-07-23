@@ -48,10 +48,15 @@ class WindowMain(Gtk.ApplicationWindow):
         return False
 
     def load_css(self):
+        display = Gdk.Display.get_default()
+        if display is None:
+            return
+
         css_provider = Gtk.CssProvider()
         css_provider.load_from_path(STYLE_CSS)
+
         Gtk.StyleContext.add_provider_for_display(
-            Gdk.Display.get_default(),
+            display,
             css_provider,
             Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
         )
