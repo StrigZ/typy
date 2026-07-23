@@ -1,8 +1,8 @@
 import time
-
+import math
 from gi.repository import Gdk, GLib, Gtk
 
-from constants import _, COMMON_WORDS
+from constants import _, WORD_LIST
 from char_stats import CharStats
 import random
 
@@ -140,14 +140,19 @@ class TypingField(Gtk.Overlay):
         self.update_highlights()
         self.key_time_start = time.monotonic()
 
-    def generate_string_to_type(self, word_count=5):
-        def word_weight(word):
-            total = 1
-            for c in word:
-                stat = self.char_stats.get_stat(c)
-                total += stat["miss"] * MISS_WEIGHT + stat["slow"] * SLOW_WEIGHT
-            return total
+    def _get_word_weight(self, word: str, freq: int):
+        freq_score = math.log10(freq + 1)
 
-        weights = [word_weight(w) for w in COMMON_WORDS]
-        chosen = random.choices(COMMON_WORDS, weights=weights, k=word_count)
+        mistake_score = 0
+        for c in word:
+            stat = self.char_stats.get_stat(c)
+            mistake_score += stat["miss"] * MISS_WEIGHT + stat["slow"] * SLOW_WEIGHT
+
+        return freq_score + mistake_score
+
+    def generate_string_to_type(self, word_count=5):
+        weights = [self._get_word_weight(w, freq) for w, freq in WORD_LIST]
+        chosen = [
+            w for w, freq in random.choices(WORD_LIST, weights=weights, k=word_count)
+        ]
         return " ".join(chosen)
