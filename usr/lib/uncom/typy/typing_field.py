@@ -6,6 +6,9 @@ from constants import _, COMMON_WORDS
 from char_stats import CharStats
 import random
 
+MISS_WEIGHT = 2
+SLOW_WEIGHT = 1
+
 
 class TypingField(Gtk.Overlay):
     def __init__(self, **kwargs):
@@ -139,7 +142,11 @@ class TypingField(Gtk.Overlay):
 
     def generate_string_to_type(self, word_count=5):
         def word_weight(word):
-            return 1 + sum(self.char_stats.data.get(c, {}).get("miss", 0) for c in word)
+            total = 1
+            for c in word:
+                stat = self.char_stats.get_stat(c)
+                total += stat["miss"] * MISS_WEIGHT + stat["slow"] * SLOW_WEIGHT
+            return total
 
         weights = [word_weight(w) for w in COMMON_WORDS]
         chosen = random.choices(COMMON_WORDS, weights=weights, k=word_count)
