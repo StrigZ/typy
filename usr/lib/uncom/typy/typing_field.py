@@ -1,3 +1,5 @@
+import time
+
 from gi.repository import Gdk, GLib, Gtk
 
 from constants import _, COMMON_WORDS
@@ -33,6 +35,8 @@ class TypingField(Gtk.Overlay):
         click_gesture.connect("pressed", self.on_clicked)
         self.add_controller(click_gesture)
 
+        self.key_time_start = time.monotonic()
+
     def _build_ui(self):
         content = Gtk.Box(
             orientation=Gtk.Orientation.VERTICAL,
@@ -66,6 +70,7 @@ class TypingField(Gtk.Overlay):
     def on_focus_enter(self):
         self.add_css_class("active")
         self.hint_label.set_visible(False)
+        self.key_time_start = time.monotonic()
 
     def on_focus_leave(self):
         self.remove_css_class("active")
@@ -97,24 +102,27 @@ class TypingField(Gtk.Overlay):
         if not unicode_val:
             return True
 
+        now = time.monotonic()
+        elapsed = now - self.key_time_start
+        self.key_time_start = now
+
         char = chr(unicode_val)
         self.key_display_label.set_text(char)
 
         curr_char = self.string_to_type[self.string_to_type_pointer]
+        is_correct = curr_char == char
 
-        if curr_char == char:
+        if is_correct:
             self.string_to_type_pointer += 1
-            # TODO: char stat decay system
-            # if char_stats.missed_char_counts.get(curr_char, 0) > 0:
-            #     char_stats.missed_char_counts[curr_char] -= 1
+
             if self.string_to_type_pointer == len(self.string_to_type):
                 self.start_new_string()
         else:
             self.missed_keys_indices.add(self.string_to_type_pointer)
-            self.char_stats.record_miss(curr_char)
 
-        self.char_stats.record_sample(curr_char)
+        self.char_stats.update_stat(curr_char, elapsed, is_correct)
         self.update_highlights()
+
         return True
 
     def start_new_string(self):
@@ -127,6 +135,7 @@ class TypingField(Gtk.Overlay):
         self.missed_keys_indices.clear()
         self.key_display_label.set_text("")
         self.update_highlights()
+        self.key_time_start = time.monotonic()
 
     def generate_string_to_type(self, word_count=5):
         def word_weight(word):
