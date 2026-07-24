@@ -3,10 +3,10 @@ from gi.repository import Gtk
 from constants import _
 
 
-class PerfomanceStatsUI(Gtk.Box):
+class PerformanceStatsUI(Gtk.Box):
     def __init__(self, **kwargs):
         super().__init__(
-            css_classes=["perfomance-stats"],
+            css_classes=["performance-stats"],
             orientation=Gtk.Orientation.HORIZONTAL,
             halign=Gtk.Align.CENTER,
             spacing=25,

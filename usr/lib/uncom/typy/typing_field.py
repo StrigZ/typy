@@ -6,8 +6,8 @@ from constants import _, WORD_LIST
 from char_stats import CharStats
 import random
 
-from perfomance_stats_ui import PerfomanceStatsUI
-from perfomance_stats import PerfomanceStats
+from performance_stats_ui import PerformanceStatsUI
+from performance_stats import PerformanceStats
 
 MISS_WEIGHT = 2
 SLOW_WEIGHT = 1
@@ -20,7 +20,7 @@ class TypingField(Gtk.Overlay):
         self.add_css_class("typing-field-container")
 
         self.char_stats = CharStats()
-        self.perfomance_stats = PerfomanceStats()
+        self.performance_stats = PerformanceStats()
 
         self.missed_keys_indices = set()
         self.string_to_type = self.generate_string_to_type()
@@ -51,8 +51,8 @@ class TypingField(Gtk.Overlay):
             css_classes=["typing-field"],
         )
 
-        self.perfomance_stats_ui = PerfomanceStatsUI()
-        content.append(self.perfomance_stats_ui)
+        self.performance_stats_ui = PerformanceStatsUI()
+        content.append(self.performance_stats_ui)
 
         self.string_to_type_label = Gtk.Label(
             css_classes=["string-to-type"], wrap=True, justify=Gtk.Justification.CENTER
@@ -81,7 +81,7 @@ class TypingField(Gtk.Overlay):
         self.add_css_class("active")
         self.hint_label.set_visible(False)
         self.key_time_start = time.monotonic()
-        self.perfomance_stats.start_new_string()
+        self.performance_stats.start_new_string()
 
     def on_focus_leave(self):
         self.remove_css_class("active")
@@ -124,7 +124,7 @@ class TypingField(Gtk.Overlay):
         is_correct = curr_char == char
         string_length = len(self.string_to_type)
 
-        self.perfomance_stats.record_keystroke(is_correct)
+        self.performance_stats.record_keystroke(is_correct)
         self.char_stats.update_stat(curr_char, elapsed, is_correct)
 
         if is_correct:
@@ -132,13 +132,13 @@ class TypingField(Gtk.Overlay):
             is_string_finished = self.string_to_type_pointer == string_length
 
             if is_string_finished:
-                self.perfomance_stats_ui.update(
-                    self.perfomance_stats.get_current_wpm(string_length),
-                    self.perfomance_stats.get_current_accuracy(),
+                self.performance_stats_ui.update(
+                    self.performance_stats.get_current_wpm(string_length),
+                    self.performance_stats.get_current_accuracy(),
                 )
 
-                self.perfomance_stats.update_and_save_averages(string_length)
-                self.perfomance_stats.start_new_string()
+                self.performance_stats.update_and_save_averages(string_length)
+                self.performance_stats.start_new_string()
 
                 self.start_new_string()
         else:

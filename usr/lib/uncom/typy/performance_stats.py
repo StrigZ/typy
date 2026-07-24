@@ -3,22 +3,22 @@ import os
 import time
 from dataclasses import dataclass
 
-from constants import PERFOMANCE_STATS_FILE
+from constants import PERFORMANCE_STATS_FILE
 from utility import ensure_folder_exists, delete_file_if_exists
 
 EMA_ALPHA = 0.2  # how fast the running average adapts to each new completed string
 
 
 @dataclass
-class PerfomanceAverages:
+class PerformanceAverages:
     avg_wpm: float = 0.0
     avg_accuracy: float = 0.0
     strings_completed: int = 0
 
 
-class PerfomanceStats:
+class PerformanceStats:
     def __init__(self):
-        self.averages: PerfomanceAverages = self._load_data()
+        self.averages: PerformanceAverages = self._load_data()
 
         self.string_start_time = time.monotonic()
         self.keystrokes = 0
@@ -67,18 +67,18 @@ class PerfomanceStats:
         self._save_data()
 
     def _save_data(self):
-        ensure_folder_exists(os.path.dirname(PERFOMANCE_STATS_FILE))
-        with open(PERFOMANCE_STATS_FILE, "w", encoding="utf-8") as f:
+        ensure_folder_exists(os.path.dirname(PERFORMANCE_STATS_FILE))
+        with open(PERFORMANCE_STATS_FILE, "w", encoding="utf-8") as f:
             json.dump(vars(self.averages), f)
 
-    def _load_data(self) -> PerfomanceAverages:
+    def _load_data(self) -> PerformanceAverages:
         try:
-            with open(PERFOMANCE_STATS_FILE, "r", encoding="utf-8") as f:
+            with open(PERFORMANCE_STATS_FILE, "r", encoding="utf-8") as f:
                 raw = json.load(f)
-            return PerfomanceAverages(**raw)
+            return PerformanceAverages(**raw)
         except (FileNotFoundError, json.JSONDecodeError):
-            return PerfomanceAverages()
+            return PerformanceAverages()
 
     def reset_data(self):
-        self.averages = PerfomanceAverages()
-        delete_file_if_exists(PERFOMANCE_STATS_FILE)
+        self.averages = PerformanceAverages()
+        delete_file_if_exists(PERFORMANCE_STATS_FILE)
