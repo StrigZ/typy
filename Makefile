@@ -20,6 +20,9 @@ install:
 reinstall: build install
 	typy -g
 
+words:
+	python3 tools/convert_words.py
+
 lint:
 	ruff check .
 
