@@ -12,11 +12,11 @@ _ = gettext.gettext
 
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
 STYLE_CSS = os.path.join(APP_DIR, "style.css")
-STATS_FILE = os.path.join(GLib.get_user_data_dir(), "typy", "stats.json")
-DAILY_GOAL_FILE = os.path.join(GLib.get_user_data_dir(), "typy", "daily_goal.json")
-PERFORMANCE_STATS_FILE = os.path.join(
-    GLib.get_user_data_dir(), "typy", "performance_stats.json"
-)
+
+USER_DATA_DIR = GLib.get_user_data_dir()
+STATS_FILE = os.path.join(USER_DATA_DIR, "typy", "stats.json")
+DAILY_GOAL_FILE = os.path.join(USER_DATA_DIR, "typy", "daily_goal.json")
+PERFORMANCE_STATS_FILE = os.path.join(USER_DATA_DIR, "typy", "performance_stats.json")
 
 INSTALLED_WORDS_DIR = "/usr/share/uncom/typy/words"
 
