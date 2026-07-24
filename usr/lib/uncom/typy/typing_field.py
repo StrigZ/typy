@@ -6,6 +6,9 @@ from constants import _, WORD_LIST
 from char_stats import CharStats
 import random
 
+from perfomance_stats_ui import PerfomanceStatsUI
+from perfomance_stats import PerfomanceStats
+
 MISS_WEIGHT = 2
 SLOW_WEIGHT = 1
 
@@ -17,6 +20,7 @@ class TypingField(Gtk.Overlay):
         self.add_css_class("typing-field-container")
 
         self.char_stats = CharStats()
+        self.perfomance_stats = PerfomanceStats()
 
         self.missed_keys_indices = set()
         self.string_to_type = self.generate_string_to_type()
@@ -47,6 +51,9 @@ class TypingField(Gtk.Overlay):
             css_classes=["typing-field"],
         )
 
+        self.perfomance_stats_ui = PerfomanceStatsUI()
+        content.append(self.perfomance_stats_ui)
+
         self.string_to_type_label = Gtk.Label(
             css_classes=["string-to-type"], wrap=True, justify=Gtk.Justification.CENTER
         )
@@ -74,6 +81,7 @@ class TypingField(Gtk.Overlay):
         self.add_css_class("active")
         self.hint_label.set_visible(False)
         self.key_time_start = time.monotonic()
+        self.perfomance_stats.start_new_string()
 
     def on_focus_leave(self):
         self.remove_css_class("active")
@@ -114,16 +122,28 @@ class TypingField(Gtk.Overlay):
 
         curr_char = self.string_to_type[self.string_to_type_pointer]
         is_correct = curr_char == char
+        string_length = len(self.string_to_type)
+
+        self.perfomance_stats.record_keystroke(is_correct)
+        self.char_stats.update_stat(curr_char, elapsed, is_correct)
 
         if is_correct:
             self.string_to_type_pointer += 1
+            is_string_finished = self.string_to_type_pointer == string_length
 
-            if self.string_to_type_pointer == len(self.string_to_type):
+            if is_string_finished:
+                self.perfomance_stats_ui.update(
+                    self.perfomance_stats.get_current_wpm(string_length),
+                    self.perfomance_stats.get_current_accuracy(),
+                )
+
+                self.perfomance_stats.update_and_save_averages(string_length)
+                self.perfomance_stats.start_new_string()
+
                 self.start_new_string()
         else:
             self.missed_keys_indices.add(self.string_to_type_pointer)
 
-        self.char_stats.update_stat(curr_char, elapsed, is_correct)
         self.update_highlights()
 
         return True
