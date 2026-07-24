@@ -8,6 +8,7 @@ import random
 
 from performance_stats_ui import PerformanceStatsUI
 from performance_stats import PerformanceStats
+from daily_goal import DailyGoal
 
 MISS_WEIGHT = 2
 SLOW_WEIGHT = 1
@@ -21,6 +22,7 @@ class TypingField(Gtk.Overlay):
 
         self.char_stats = CharStats()
         self.performance_stats = PerformanceStats()
+        self.daily_goal = DailyGoal()
 
         self.missed_keys_indices = set()
         self.string_to_type = self.generate_string_to_type()
@@ -43,6 +45,7 @@ class TypingField(Gtk.Overlay):
         self.add_controller(click_gesture)
 
         self.key_time_start = time.monotonic()
+        self.string_time_start = time.monotonic()
 
     def _build_ui(self):
         content = Gtk.Box(
@@ -81,6 +84,7 @@ class TypingField(Gtk.Overlay):
         self.add_css_class("active")
         self.hint_label.set_visible(False)
         self.key_time_start = time.monotonic()
+        self.string_time_start = time.monotonic()
         self.performance_stats.start_new_string()
 
     def on_focus_leave(self):
@@ -114,7 +118,6 @@ class TypingField(Gtk.Overlay):
             return True
 
         now = time.monotonic()
-        elapsed = now - self.key_time_start
         self.key_time_start = now
 
         char = chr(unicode_val)
@@ -125,7 +128,7 @@ class TypingField(Gtk.Overlay):
         string_length = len(self.string_to_type)
 
         self.performance_stats.record_keystroke(is_correct)
-        self.char_stats.update_stat(curr_char, elapsed, is_correct)
+        self.char_stats.update_stat(curr_char, now - self.key_time_start, is_correct)
 
         if is_correct:
             self.string_to_type_pointer += 1
@@ -140,6 +143,10 @@ class TypingField(Gtk.Overlay):
                 self.performance_stats.update_and_save_averages(string_length)
                 self.performance_stats.start_new_string()
 
+                self.daily_goal.increment(now - self.string_time_start)
+
+                self.char_stats.save_data()
+
                 self.start_new_string()
         else:
             self.missed_keys_indices.add(self.string_to_type_pointer)
@@ -149,7 +156,6 @@ class TypingField(Gtk.Overlay):
         return True
 
     def start_new_string(self):
-        self.char_stats.save_data()
         self.string_to_type = self.generate_string_to_type()
         self.reset_current_string()
 
@@ -159,6 +165,7 @@ class TypingField(Gtk.Overlay):
         self.key_display_label.set_text("")
         self.update_highlights()
         self.key_time_start = time.monotonic()
+        self.string_time_start = time.monotonic()
 
     def _get_word_weight(self, word: str, freq: int):
         freq_score = math.log10(freq + 1)
