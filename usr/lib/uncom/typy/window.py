@@ -7,7 +7,7 @@ from typing_field import TypingField
 
 class WindowMain(Gtk.ApplicationWindow):
     def __init__(self, **kargs):
-        super().__init__(**kargs, title=_("typy"))
+        super().__init__(**kargs, title="typy")
         self.set_resizable(False)
         self.set_default_size(500, 300)
 
