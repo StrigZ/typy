@@ -9,37 +9,37 @@ msgstr ""
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 
+
 #: usr/lib/uncom/typy/dialogs.py:11
 msgid "Typing"
-msgstr "Набор текста"
+msgstr ""
 
 #: usr/lib/uncom/typy/dialogs.py:14
 msgid "Reset stats"
-msgstr "Сбросить статистику"
+msgstr ""
 
 #: usr/lib/uncom/typy/dialogs.py:15
 msgid "Reset"
-msgstr "Сбросить"
+msgstr ""
 
 #: usr/lib/uncom/typy/performance_stats_ui.py:27
 msgid "Speed"
-msgstr "Скорость"
+msgstr ""
 
 #: usr/lib/uncom/typy/performance_stats_ui.py:34
 msgid "Accuracy"
-msgstr "Точность"
+msgstr ""
 
 #: usr/lib/uncom/typy/typing_field.py:69
 msgid "Click or press Enter to start typing"
-msgstr "Кликни или нажми Enter для старта"
+msgstr ""
 
 #: usr/lib/uncom/typy/window.py:37
 msgid "Settings"
-msgstr "Настройки"
+msgstr ""
 
