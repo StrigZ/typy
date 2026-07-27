@@ -43,7 +43,7 @@ class WindowMain(Gtk.ApplicationWindow):
             keyval in (Gdk.KEY_Return, Gdk.KEY_KP_Enter)
             and not self.typing_field.is_focus()
         ):
-            self.typing_field.grab_focus()
+            self.typing_field.activate()
             return True
         return False
 

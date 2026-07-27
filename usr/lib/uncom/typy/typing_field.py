@@ -15,11 +15,9 @@ MISS_WEIGHT = 2
 SLOW_WEIGHT = 1
 
 
-class TypingField(Gtk.Overlay):
+class TypingField(Gtk.Box):
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.set_focusable(True)
-        self.add_css_class("typing-field-container")
+        super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=32, **kwargs)
 
         self.char_stats = CharStats()
         self.performance_stats = PerformanceStats()
@@ -30,75 +28,30 @@ class TypingField(Gtk.Overlay):
         self.string_to_type_pointer = 0
 
         self._build_ui()
+        self._attach_controllers()
         self.update_highlights()
-
-        key_controller = Gtk.EventControllerKey()
-        key_controller.connect("key-pressed", self.on_key_pressed)
-        self.add_controller(key_controller)
-
-        focus_controller = Gtk.EventControllerFocus()
-        focus_controller.connect("enter", lambda *a: self.on_focus_enter())
-        focus_controller.connect("leave", lambda *a: self.on_focus_leave())
-        self.add_controller(focus_controller)
-
-        click_gesture = Gtk.GestureClick()
-        click_gesture.connect("pressed", self.on_clicked)
-        self.add_controller(click_gesture)
 
         self.key_time_start = time.monotonic()
         self.string_time_start = time.monotonic()
 
-    def _build_ui(self):
-        content = Gtk.Box(
-            orientation=Gtk.Orientation.VERTICAL,
-            spacing=10,
-            css_classes=["typing-field"],
-        )
-
-        self.performance_stats_ui = PerformanceStatsUI()
-        content.append(self.performance_stats_ui)
-
-        self.daily_goal_ui = DailyGoalUI()
-        self.daily_goal_ui.update_goal(
-            self.daily_goal.get_goal_in_minutes(),
-            self.daily_goal.get_progress_in_fractions(),
-        )
-        content.append(self.daily_goal_ui)
-
-        self.string_to_type_label = Gtk.Label(
-            css_classes=["string-to-type"], wrap=True, justify=Gtk.Justification.CENTER
-        )
-        self.string_to_type_label.set_text(self.string_to_type)
-        content.append(self.string_to_type_label)
-
-        self.key_display_label = Gtk.Label(css_classes=["key-display"])
-        content.append(self.key_display_label)
-
-        self.set_child(content)
-
-        self.hint_label = Gtk.Label(
-            label=_("Click or press Enter to start typing"),
-            halign=Gtk.Align.CENTER,
-            valign=Gtk.Align.CENTER,
-            css_classes=["dim-label"],
-        )
-        self.add_overlay(self.hint_label)
-
     def on_clicked(self, gesture, n_press, x, y):
-        self.grab_focus()
+        self.words_container.grab_focus()
         gesture.set_state(Gtk.EventSequenceState.CLAIMED)
 
     def on_focus_enter(self):
-        self.add_css_class("active")
+        self.words_container.add_css_class("active")
         self.hint_label.set_visible(False)
         self.key_time_start = time.monotonic()
         self.string_time_start = time.monotonic()
         self.performance_stats.start_new_string()
 
     def on_focus_leave(self):
-        self.remove_css_class("active")
+        self.words_container.remove_css_class("active")
         self.hint_label.set_visible(True)
         self.reset_current_string()
+
+    def activate(self):
+        self.words_container.grab_focus()
 
     def update_highlights(self):
         parts = []
@@ -195,3 +148,69 @@ class TypingField(Gtk.Overlay):
             w for w, freq in random.choices(WORD_LIST, weights=weights, k=word_count)
         ]
         return " ".join(chosen)
+
+    def _build_ui(self):
+        self._build_stats_bar_ui()
+        self._build_words_container()
+
+    def _build_stats_bar_ui(self):
+        content = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL,
+            spacing=16,
+        )
+
+        self.performance_stats_ui = PerformanceStatsUI()
+        content.append(self.performance_stats_ui)
+
+        self.daily_goal_ui = DailyGoalUI()
+        self.daily_goal_ui.update_goal(
+            self.daily_goal.get_goal_in_minutes(),
+            self.daily_goal.get_progress_in_fractions(),
+        )
+        content.append(self.daily_goal_ui)
+        self.append(content)
+
+    def _build_words_container(self):
+        self.words_container = Gtk.Overlay(
+            css_classes=["typing-field-container"], focusable=True
+        )
+        content = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL,
+            spacing=24,
+            css_classes=["typing-field"],
+        )
+
+        self.string_to_type_label = Gtk.Label(
+            css_classes=["string-to-type"], wrap=True, justify=Gtk.Justification.CENTER
+        )
+        self.string_to_type_label.set_text(self.string_to_type)
+        content.append(self.string_to_type_label)
+
+        self.key_display_label = Gtk.Label(css_classes=["key-display"])
+        content.append(self.key_display_label)
+
+        self.words_container.set_child(content)
+
+        self.hint_label = Gtk.Label(
+            label=_("Click or press Enter to start typing"),
+            halign=Gtk.Align.CENTER,
+            valign=Gtk.Align.CENTER,
+            css_classes=["dim-label"],
+        )
+        self.words_container.add_overlay(self.hint_label)
+
+        self.append(self.words_container)
+
+    def _attach_controllers(self):
+        key_controller = Gtk.EventControllerKey()
+        key_controller.connect("key-pressed", self.on_key_pressed)
+        self.words_container.add_controller(key_controller)
+
+        focus_controller = Gtk.EventControllerFocus()
+        focus_controller.connect("enter", lambda *a: self.on_focus_enter())
+        focus_controller.connect("leave", lambda *a: self.on_focus_leave())
+        self.words_container.add_controller(focus_controller)
+
+        click_gesture = Gtk.GestureClick()
+        click_gesture.connect("pressed", self.on_clicked)
+        self.words_container.add_controller(click_gesture)
