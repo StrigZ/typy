@@ -6,10 +6,7 @@ from constants import _, WORD_LIST
 from char_stats import CharStats
 import random
 
-from performance_stats_ui import PerformanceStatsUI
-from performance_stats import PerformanceStats
-from daily_goal import DailyGoal
-from daily_goal_ui import DailyGoalUI
+from stats_bar import StatsBar
 
 MISS_WEIGHT = 2
 SLOW_WEIGHT = 1
@@ -20,8 +17,8 @@ class TypingField(Gtk.Box):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=32, **kwargs)
 
         self.char_stats = CharStats()
-        self.performance_stats = PerformanceStats()
-        self.daily_goal = DailyGoal()
+        self.stats_bar = StatsBar()
+        self.append(self.stats_bar)
 
         self.missed_keys_indices = set()
         self.string_to_type = self.generate_string_to_type()
@@ -43,7 +40,7 @@ class TypingField(Gtk.Box):
         self.hint_label.set_visible(False)
         self.key_time_start = time.monotonic()
         self.string_time_start = time.monotonic()
-        self.performance_stats.start_new_string()
+        self.stats_bar.start_new_string()
 
     def on_focus_leave(self):
         self.words_container.remove_css_class("active")
@@ -88,7 +85,7 @@ class TypingField(Gtk.Box):
         is_correct = curr_char == char
         string_length = len(self.string_to_type)
 
-        self.performance_stats.record_keystroke(is_correct)
+        self.stats_bar.record_keystroke(is_correct)
         self.char_stats.update_stat(curr_char, now - self.key_time_start, is_correct)
 
         if is_correct:
@@ -96,19 +93,8 @@ class TypingField(Gtk.Box):
             is_string_finished = self.string_to_type_pointer == string_length
 
             if is_string_finished:
-                self.performance_stats_ui.update(
-                    self.performance_stats.get_current_wpm(string_length),
-                    self.performance_stats.get_current_accuracy(),
-                )
-
-                self.performance_stats.update_and_save_averages(string_length)
-                self.performance_stats.start_new_string()
-
-                self.daily_goal.increment(now - self.string_time_start)
-
-                self.daily_goal_ui.update_progress(
-                    self.daily_goal.get_progress_in_fractions()
-                )
+                self.stats_bar.update_perfomance_stats(string_length)
+                self.stats_bar.update_daily_goal_stats(now - self.string_time_start)
 
                 self.char_stats.save_data()
 
@@ -150,25 +136,7 @@ class TypingField(Gtk.Box):
         return " ".join(chosen)
 
     def _build_ui(self):
-        self._build_stats_bar_ui()
         self._build_words_container()
-
-    def _build_stats_bar_ui(self):
-        content = Gtk.Box(
-            orientation=Gtk.Orientation.VERTICAL,
-            spacing=16,
-        )
-
-        self.performance_stats_ui = PerformanceStatsUI()
-        content.append(self.performance_stats_ui)
-
-        self.daily_goal_ui = DailyGoalUI()
-        self.daily_goal_ui.update_goal(
-            self.daily_goal.get_goal_in_minutes(),
-            self.daily_goal.get_progress_in_fractions(),
-        )
-        content.append(self.daily_goal_ui)
-        self.append(content)
 
     def _build_words_container(self):
         self.words_container = Gtk.Overlay(
