@@ -9,6 +9,7 @@ import random
 from performance_stats_ui import PerformanceStatsUI
 from performance_stats import PerformanceStats
 from daily_goal import DailyGoal
+from daily_goal_ui import DailyGoalUI
 
 MISS_WEIGHT = 2
 SLOW_WEIGHT = 1
@@ -56,6 +57,13 @@ class TypingField(Gtk.Overlay):
 
         self.performance_stats_ui = PerformanceStatsUI()
         content.append(self.performance_stats_ui)
+
+        self.daily_goal_ui = DailyGoalUI()
+        self.daily_goal_ui.update_goal(
+            self.daily_goal.get_goal_in_minutes(),
+            self.daily_goal.get_progress_in_fractions(),
+        )
+        content.append(self.daily_goal_ui)
 
         self.string_to_type_label = Gtk.Label(
             css_classes=["string-to-type"], wrap=True, justify=Gtk.Justification.CENTER
@@ -144,6 +152,10 @@ class TypingField(Gtk.Overlay):
                 self.performance_stats.start_new_string()
 
                 self.daily_goal.increment(now - self.string_time_start)
+
+                self.daily_goal_ui.update_progress(
+                    self.daily_goal.get_progress_in_fractions()
+                )
 
                 self.char_stats.save_data()
 

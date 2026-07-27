@@ -16,6 +16,12 @@ class DailyGoal:
 
         self._load_data()
 
+    def get_goal_in_minutes(self):
+        return self.goal_in_minutes
+
+    def get_progress_in_fractions(self) -> float:
+        return self.elapsed_in_minutes / self.goal_in_minutes
+
     def increment(self, elapsed_in_seconds: float):
         self._check_new_day()
         self.elapsed_in_minutes += elapsed_in_seconds / 60
