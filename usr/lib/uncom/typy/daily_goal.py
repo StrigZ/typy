@@ -19,6 +19,10 @@ class DailyGoal:
     def is_goal_reached(self) -> bool:
         return self.elapsed_in_minutes >= self.goal_in_minutes
 
+    def reset_daily_progress(self):
+        self.elapsed_in_minutes = 0.0
+        self._save_data()
+
     def get_goal_in_minutes(self):
         return self.goal_in_minutes
 

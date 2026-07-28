@@ -1,8 +1,9 @@
 from gi.repository import Gdk, Gtk
 
 from constants import _, STYLE_CSS
-from dialogs import show_settings
 from typing_controller import TypingController
+
+from settings_dialog import show_settings
 
 
 class WindowMain(Gtk.ApplicationWindow):
@@ -20,11 +21,14 @@ class WindowMain(Gtk.ApplicationWindow):
         self.add_controller(activate_controller)
 
     def _build_ui(self):
-        main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
-        main.props.margin_start = 25
-        main.props.margin_end = 25
-        main.props.margin_top = 25
-        main.props.margin_bottom = 25
+        main = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL,
+            spacing=10,
+            margin_start=25,
+            margin_end=25,
+            margin_top=25,
+            margin_bottom=25,
+        )
         self.set_child(main)
 
         self.typing_controller = TypingController(hexpand=True, vexpand=True)
@@ -35,7 +39,9 @@ class WindowMain(Gtk.ApplicationWindow):
         main.add_controller(deactivate_click_gesture)
 
         settings_button = Gtk.Button(label=_("Settings"))
-        settings_button.connect("clicked", lambda *a: show_settings(self))
+        settings_button.connect(
+            "clicked", lambda *a: show_settings(self, self.typing_controller)
+        )
         main.append(settings_button)
 
     def on_activate_key_pressed(self, controller, keyval, keycode, state):

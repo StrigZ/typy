@@ -15,6 +15,20 @@ class StatsBar(Gtk.Box):
 
         self._build_ui()
 
+    def set_daily_goal_minutes(self, minutes: int):
+        self._daily_goal.set_goal(minutes)
+        self.daily_goal_ui.update(
+            self._daily_goal.get_goal_in_minutes(),
+            self._daily_goal.get_progress_in_fractions(),
+        )
+
+    def reset_daily_progress(self):
+        self._daily_goal.reset_daily_progress()
+        self.daily_goal_ui.update(
+            self._daily_goal.get_goal_in_minutes(),
+            self._daily_goal.get_progress_in_fractions(),
+        )
+
     def reset_current_string_counters(self):
         self._performance_stats.start_new_string()
 
