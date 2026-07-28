@@ -1,5 +1,3 @@
-import math
-import random
 import time
 
 from gi.repository import Gdk, Gtk
@@ -8,9 +6,7 @@ from char_stats import CharStats
 from constants import WORD_LIST
 from stats_bar import StatsBar
 from typing_area import TypingArea
-
-MISS_WEIGHT = 2
-SLOW_WEIGHT = 1
+from string_generator import StringGenerator
 
 
 class TypingController(Gtk.Box):
@@ -18,11 +14,12 @@ class TypingController(Gtk.Box):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=32, **kwargs)
 
         self._char_stats = CharStats()
+        self._string_generator = StringGenerator(WORD_LIST, self._char_stats)
 
         self._stats_bar = StatsBar()
         self.append(self._stats_bar)
 
-        self._string_to_type = self._generate_string_to_type()
+        self._string_to_type = self._string_generator.generate()
         self._string_to_type_pointer = 0
         self._missed_keys_indices = set()
 
@@ -92,7 +89,7 @@ class TypingController(Gtk.Box):
         return True
 
     def _start_new_string(self):
-        self._string_to_type = self._generate_string_to_type()
+        self._string_to_type = self._string_generator.generate()
         self._string_to_type_pointer = 0
         self._missed_keys_indices.clear()
         self._string_time_start = time.monotonic()
@@ -119,18 +116,3 @@ class TypingController(Gtk.Box):
         click_gesture = Gtk.GestureClick()
         click_gesture.connect("pressed", self._on_clicked)
         self._typing_area.add_controller(click_gesture)
-
-    def _get_word_weight(self, word: str, freq: int):
-        freq_score = math.log10(freq + 1)
-        mistake_score = 0
-        for c in word:
-            stat = self._char_stats.get_stat(c)
-            mistake_score += stat["miss"] * MISS_WEIGHT + stat["slow"] * SLOW_WEIGHT
-        return freq_score + mistake_score
-
-    def _generate_string_to_type(self, word_count=5):
-        weights = [self._get_word_weight(w, freq) for w, freq in WORD_LIST]
-        chosen = [
-            w for w, freq in random.choices(WORD_LIST, weights=weights, k=word_count)
-        ]
-        return " ".join(chosen)
