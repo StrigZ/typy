@@ -2,7 +2,7 @@ from gi.repository import Gdk, Gtk
 
 from constants import _, STYLE_CSS
 from dialogs import show_settings
-from typing_field import TypingField
+from typing_controller import TypingController
 
 
 class WindowMain(Gtk.ApplicationWindow):
@@ -27,8 +27,8 @@ class WindowMain(Gtk.ApplicationWindow):
         main.props.margin_bottom = 25
         self.set_child(main)
 
-        self.typing_field = TypingField(hexpand=True, vexpand=True)
-        main.append(self.typing_field)
+        self.typing_controller = TypingController(hexpand=True, vexpand=True)
+        main.append(self.typing_controller)
 
         deactivate_click_gesture = Gtk.GestureClick()
         deactivate_click_gesture.connect("pressed", lambda *a: self.set_focus(None))
@@ -41,9 +41,9 @@ class WindowMain(Gtk.ApplicationWindow):
     def on_activate_key_pressed(self, controller, keyval, keycode, state):
         if (
             keyval in (Gdk.KEY_Return, Gdk.KEY_KP_Enter)
-            and not self.typing_field.is_focus()
+            and not self.typing_controller.is_focus()
         ):
-            self.typing_field.activate()
+            self.typing_controller.activate()
             return True
         return False
 
