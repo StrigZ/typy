@@ -23,9 +23,13 @@
     font-weight: bold;
 }
 
-.performance-stats {
-    /* border: 1px solid black; */
-    /* display: flex;
-    justify-content: center;
-    justify-items: center; */
+.checkmark {
+    color: #4caf50;
+    font-weight: bold;
+    font-size: 16px;
 }
+
+progressbar.goal-reached progress {
+    background-color: #4caf50;
+}
+
