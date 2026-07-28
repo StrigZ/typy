@@ -15,13 +15,13 @@ class StatsBar(Gtk.Box):
 
         self._build_ui()
 
-    def start_new_string(self):
+    def reset_current_string_counters(self):
         self._performance_stats.start_new_string()
 
     def record_keystroke(self, is_correct: bool):
         self._performance_stats.record_keystroke(is_correct)
 
-    def update_perfomance_stats(self, string_length: int):
+    def update_performance_stats(self, string_length: int):
         self.performance_stats_ui.update(
             self._performance_stats.get_current_wpm(string_length),
             self._performance_stats.get_current_accuracy(),
@@ -33,7 +33,10 @@ class StatsBar(Gtk.Box):
     def update_daily_goal_stats(self, elapsed: float):
         self._daily_goal.increment(elapsed)
 
-        self.daily_goal_ui.update_progress(self._daily_goal.get_progress_in_fractions())
+        self.daily_goal_ui.update(
+            self._daily_goal.get_goal_in_minutes(),
+            self._daily_goal.get_progress_in_fractions(),
+        )
 
     def _build_ui(self):
 
@@ -41,7 +44,7 @@ class StatsBar(Gtk.Box):
         self.append(self.performance_stats_ui)
 
         self.daily_goal_ui = DailyGoalUI()
-        self.daily_goal_ui.update_goal(
+        self.daily_goal_ui.update(
             self._daily_goal.get_goal_in_minutes(),
             self._daily_goal.get_progress_in_fractions(),
         )

@@ -43,12 +43,12 @@ class TypingController(Gtk.Box):
         gesture.set_state(Gtk.EventSequenceState.CLAIMED)
 
     def _on_focus_enter(self, controller):
-        self._stats_bar.start_new_string()
         self._typing_area.unblur()
 
     def _on_focus_leave(self, controller):
         self._typing_area.blur()
         self._typing_area.clear_display_character()
+        self._stats_bar.reset_current_string_counters()
         self._start_new_string()
 
     def _on_key_pressed(self, controller, keyval, keycode, state):
@@ -78,7 +78,7 @@ class TypingController(Gtk.Box):
             self._string_to_type_pointer += 1
 
             if self._string_to_type_pointer == current_string_length:
-                self._stats_bar.update_perfomance_stats(current_string_length)
+                self._stats_bar.update_performance_stats(current_string_length)
                 self._stats_bar.update_daily_goal_stats(now - self._string_time_start)
                 self._char_stats.save_data()
                 self._start_new_string()

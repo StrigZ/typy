@@ -12,20 +12,24 @@ class DailyGoal:
         self.goal_in_minutes = goal
         self.elapsed_in_minutes: float = 0.0
         self.date: str = date.today().isoformat()
-        self.is_goal_reached = self.elapsed_in_minutes >= self.goal_in_minutes
 
         self._load_data()
+
+    @property
+    def is_goal_reached(self) -> bool:
+        return self.elapsed_in_minutes >= self.goal_in_minutes
 
     def get_goal_in_minutes(self):
         return self.goal_in_minutes
 
     def get_progress_in_fractions(self) -> float:
+        if self.goal_in_minutes <= 0:
+            return 0.0
         return self.elapsed_in_minutes / self.goal_in_minutes
 
     def increment(self, elapsed_in_seconds: float):
         self._check_new_day()
         self.elapsed_in_minutes += elapsed_in_seconds / 60
-        self.is_goal_reached = self.elapsed_in_minutes >= self.goal_in_minutes
         self._save_data()
 
     def set_goal(self, goal: int):
@@ -57,7 +61,6 @@ class DailyGoal:
                 data = json.load(f)
             self.goal_in_minutes = data.get("goal_in_minutes", self.goal_in_minutes)
             self.elapsed_in_minutes = data.get("elapsed_in_minutes", 0.0)
-            self.is_goal_reached = data.get("goal_reached", False)
             self.date = data.get("date", self.date)
             self._check_new_day()
         except (FileNotFoundError, json.JSONDecodeError):

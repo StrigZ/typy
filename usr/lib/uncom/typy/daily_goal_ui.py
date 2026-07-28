@@ -14,16 +14,10 @@ class DailyGoalUI(Gtk.Box):
 
         self._build_ui()
 
-    def update_progress(
-        self,
-        progress: float,
-    ):
-        self.progress_label.set_text(f"{round(progress * 100)}%/")
-        self.progress_bar.set_fraction(progress)
-
-    def update_goal(self, goal_in_minutes: int, progress_in_fractions: float):
+    def update(self, goal_in_minutes: int, progress_in_fractions: float):
         self.goal_label.set_text(f"{goal_in_minutes}min")
-        self.update_progress(progress_in_fractions)
+        self.progress_label.set_text(f"{round(progress_in_fractions * 100)}%/")
+        self.progress_bar.set_fraction(min(progress_in_fractions, 1.0))
 
     def _build_ui(self):
         title_label = Gtk.Label()
