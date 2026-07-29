@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2026-07-24 08:57+0300\n"
+"POT-Creation-Date: 2026-07-29 15:30+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,15 +15,21 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: usr/lib/uncom/typy/dialogs.py:11
+#: usr/lib/uncom/typy/daily_goal_ui.py:34
+#: usr/lib/uncom/typy/settings_dialog.py:38
+msgid "Daily goal"
+msgstr ""
+
+#: usr/lib/uncom/typy/dialogs.py:11 usr/lib/uncom/typy/settings_dialog.py:63
 msgid "Typing"
 msgstr ""
 
-#: usr/lib/uncom/typy/dialogs.py:14
+#: usr/lib/uncom/typy/dialogs.py:14 usr/lib/uncom/typy/settings_dialog.py:27
 msgid "Reset stats"
 msgstr ""
 
-#: usr/lib/uncom/typy/dialogs.py:15
+#: usr/lib/uncom/typy/dialogs.py:15 usr/lib/uncom/typy/settings_dialog.py:28
+#: usr/lib/uncom/typy/settings_dialog.py:52
 msgid "Reset"
 msgstr ""
 
@@ -35,11 +41,27 @@ msgstr ""
 msgid "Accuracy"
 msgstr ""
 
-#: usr/lib/uncom/typy/typing_field.py:69
+#: usr/lib/uncom/typy/settings_dialog.py:25
+msgid "Stats"
+msgstr ""
+
+#: usr/lib/uncom/typy/settings_dialog.py:43
+msgid "Minutes per day"
+msgstr ""
+
+#: usr/lib/uncom/typy/settings_dialog.py:51
+msgid "Reset daily progress"
+msgstr ""
+
+#: usr/lib/uncom/typy/settings_dialog.py:66
+msgid "String length"
+msgstr ""
+
+#: usr/lib/uncom/typy/typing_area.py:56
 msgid "Click or press Enter to start typing"
 msgstr ""
 
-#: usr/lib/uncom/typy/window.py:37
+#: usr/lib/uncom/typy/window.py:42
 msgid "Settings"
 msgstr ""
 
