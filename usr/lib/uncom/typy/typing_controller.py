@@ -7,11 +7,18 @@ from constants import WORD_LIST
 from stats_bar import StatsBar
 from typing_area import TypingArea
 from string_generator import StringGenerator
+from app_settings import get_app_settings
+
+app_settings = get_app_settings()
 
 
 class TypingController(Gtk.Box):
     def __init__(self, **kwargs):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=32, **kwargs)
+
+        app_settings.connect(
+            "notify::string-length", lambda *a: self._start_new_string()
+        )
 
         self._char_stats = CharStats()
         self._string_generator = StringGenerator(WORD_LIST, self._char_stats)
@@ -47,9 +54,9 @@ class TypingController(Gtk.Box):
 
     def _on_focus_leave(self, controller):
         self._typing_area.blur()
-        self._typing_area.clear_display_character()
-        self._stats_bar.reset_current_string_counters()
-        self._start_new_string()
+        # self._typing_area.clear_display_character()
+        # self._stats_bar.reset_current_string_counters()
+        # self._start_new_string()
 
     def _on_key_pressed(self, controller, keyval, keycode, state):
         current_string_length = len(self._string_to_type)

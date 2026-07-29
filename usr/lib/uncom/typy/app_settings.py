@@ -1,24 +1,26 @@
-# app_settings.py
 import json
 import os
 
 from constants import APP_SETTINGS_FILE
 from utility import ensure_folder_exists
+from gi.repository import GObject
 
 DEFAULT_MAX_CHARS = 100
 
 
-class AppSettings:
-    def __init__(self):
-        self.string_length = DEFAULT_MAX_CHARS
-        self._load_data()
+class AppSettings(GObject.Object):
+    string_length = GObject.Property(type=int, default=DEFAULT_MAX_CHARS)
 
-    def get_max_chars(self) -> int:
+    def __init__(self):
+        super().__init__()
+        self._load_data()
+        self.connect("notify::string-length", lambda *a: self._save_data())
+
+    def get_string_length(self) -> int:
         return self.string_length
 
-    def set_max_chars(self, value: int):
+    def set_string_length(self, value: int):
         self.string_length = value
-        self._save_data()
 
     def _save_data(self):
         ensure_folder_exists(os.path.dirname(APP_SETTINGS_FILE))

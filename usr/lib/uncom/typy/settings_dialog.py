@@ -64,10 +64,10 @@ class SettingsDialog(Adw.PreferencesDialog):
 
         length_row = Adw.SpinRow.new_with_range(50, 150, 10)
         length_row.set_title(_("String length"))
-        length_row.set_value(app_settings.get_max_chars())
+        length_row.set_value(app_settings.get_string_length())
         length_row.connect(
             "notify::value",
-            lambda row, param: app_settings.set_max_chars(int(row.get_value())),
+            lambda row, param: app_settings.set_string_length(int(row.get_value())),
         )
         group.add(length_row)
 

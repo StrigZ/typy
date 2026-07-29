@@ -24,7 +24,7 @@ class StringGenerator:
             word, _freq = random.choices(self._word_list, weights=weights, k=1)[0]
 
             added_length = len(word) + (1 if words else 0)  # +1 for the space
-            if total_length + added_length > app_settings.get_max_chars() and words:
+            if total_length + added_length > app_settings.get_string_length() and words:
                 break
 
             words.append(word)
