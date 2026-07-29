@@ -14,7 +14,9 @@
 }
 
 .string-to-type {
-    font-size: 24px;
+    font-family: monospace;
+    line-height: 1.5;
+    font-size: 20px;
     font-weight: 500;
 }
 
@@ -32,4 +34,3 @@
 progressbar.goal-reached progress {
     background-color: #4caf50;
 }
-
