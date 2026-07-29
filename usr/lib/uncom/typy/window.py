@@ -24,11 +24,11 @@ class WindowMain(Gtk.ApplicationWindow):
     def _build_ui(self):
         main = Gtk.Box(
             orientation=Gtk.Orientation.VERTICAL,
-            spacing=10,
-            margin_start=25,
-            margin_end=25,
-            margin_top=25,
-            margin_bottom=25,
+            spacing=32,
+            margin_start=24,
+            margin_end=24,
+            margin_top=24,
+            margin_bottom=24,
         )
         self.set_child(main)
 

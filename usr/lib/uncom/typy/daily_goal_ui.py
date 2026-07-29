@@ -38,7 +38,7 @@ class DailyGoalUI(Gtk.Box):
             orientation=Gtk.Orientation.HORIZONTAL,
             valign=Gtk.Align.CENTER,
             hexpand=True,
-            spacing=4,
+            spacing=8,
         )
         self.append(content_box)
 

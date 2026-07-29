@@ -1,6 +1,5 @@
 import json
 import os
-import random
 from typing import TypedDict
 
 from constants import STATS_FILE

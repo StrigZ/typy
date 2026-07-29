@@ -9,7 +9,7 @@ class PerformanceStatsUI(Gtk.Box):
             css_classes=["performance-stats"],
             orientation=Gtk.Orientation.HORIZONTAL,
             halign=Gtk.Align.CENTER,
-            spacing=25,
+            spacing=32,
             **kwargs,
         )
 
@@ -37,7 +37,7 @@ class PerformanceStatsUI(Gtk.Box):
     def _build_stat_box(self, title_label_text: str, value_label: Gtk.Label):
         box = Gtk.Box(
             orientation=Gtk.Orientation.VERTICAL,
-            spacing=15,
+            spacing=16,
             halign=Gtk.Align.CENTER,
         )
         title_label = Gtk.Label(label=title_label_text, css_classes=["dim-label"])

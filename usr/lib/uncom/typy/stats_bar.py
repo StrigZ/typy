@@ -8,7 +8,7 @@ from daily_goal_ui import DailyGoalUI
 
 class StatsBar(Gtk.Box):
     def __init__(self, **kwargs):
-        super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=16, **kwargs)
+        super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=32, **kwargs)
 
         self._performance_stats = PerformanceStats()
         self._daily_goal = DailyGoal()
