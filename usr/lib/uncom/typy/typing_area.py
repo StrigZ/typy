@@ -10,9 +10,6 @@ class TypingArea(Gtk.Overlay):
         )
         self._build_ui()
 
-    def focus(self):
-        self.grab_focus()
-
     def blur(self):
         self.remove_css_class("active")
         self.hint_label.set_visible(True)
@@ -20,12 +17,6 @@ class TypingArea(Gtk.Overlay):
     def unblur(self):
         self.add_css_class("active")
         self.hint_label.set_visible(False)
-
-    def update_display_character(self, char: str):
-        self.key_display_label.set_text(char)
-
-    def clear_display_character(self):
-        self.key_display_label.set_text("")
 
     def render(self, string_to_type: str, pointer: int, missed_indices: set[int]):
         parts = []

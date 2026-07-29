@@ -11,5 +11,7 @@ class Application(Adw.Application):
 
     def do_activate(self):
         window = WindowMain(application=self)
-        self.connect("shutdown", lambda *a: window.typing_controller.save_char_stats())
+        self.connect(
+            "shutdown", lambda *a: window.typing_controller.char_stats.save_data()
+        )
         window.present()

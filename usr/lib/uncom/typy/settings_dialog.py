@@ -27,7 +27,7 @@ class SettingsDialog(Adw.PreferencesDialog):
         reset_row = Adw.ActionRow(title=_("Reset stats"))
         reset_button = Gtk.Button(label=_("Reset"), valign=Gtk.Align.CENTER)
         reset_button.connect(
-            "clicked", lambda *a: self._typing_controller._char_stats.reset_data()
+            "clicked", lambda *a: self._typing_controller.char_stats.reset_data()
         )
         reset_row.add_suffix(reset_button)
         group.add(reset_row)
@@ -37,11 +37,11 @@ class SettingsDialog(Adw.PreferencesDialog):
     def _build_daily_goal_group(self) -> Adw.PreferencesGroup:
         group = Adw.PreferencesGroup(title=_("Daily goal"))
 
-        stats_bar = self._typing_controller._stats_bar
+        stats_bar = self._typing_controller.stats_bar
 
         set_goal_row = Adw.SpinRow.new_with_range(5, 240, 5)
         set_goal_row.set_title(_("Minutes per day"))
-        set_goal_row.set_value(stats_bar._daily_goal.goal_in_minutes)
+        set_goal_row.set_value(stats_bar.daily_goal.goal_in_minutes)
         set_goal_row.connect(
             "notify::value",
             lambda row, param: stats_bar.set_daily_goal_minutes(int(row.get_value())),

@@ -20,18 +20,18 @@ class TypingController(Gtk.Box):
             "notify::string-length", lambda *a: self._start_new_string()
         )
 
-        self._char_stats = CharStats()
-        self._string_generator = StringGenerator(WORD_LIST, self._char_stats)
+        self.char_stats = CharStats()
+        self.string_generator = StringGenerator(WORD_LIST, self.char_stats)
 
-        self._stats_bar = StatsBar()
-        self.append(self._stats_bar)
+        self.stats_bar = StatsBar()
+        self.append(self.stats_bar)
 
-        self._string_to_type = self._string_generator.generate()
+        self._string_to_type = self.string_generator.generate()
         self._string_to_type_pointer = 0
         self._missed_keys_indices = set()
 
-        self._typing_area = TypingArea()
-        self.append(self._typing_area)
+        self.typing_area = TypingArea()
+        self.append(self.typing_area)
         self._render()
 
         self._attach_controllers()
@@ -39,24 +39,15 @@ class TypingController(Gtk.Box):
         self._key_time_start = time.monotonic()
         self._string_time_start = time.monotonic()
 
-    def activate(self):
-        self._typing_area.focus()
-
-    def save_char_stats(self):
-        self._char_stats.save_data()
-
     def _on_clicked(self, gesture, n_press, x, y):
-        self._typing_area.focus()
+        self.typing_area.grab_focus()
         gesture.set_state(Gtk.EventSequenceState.CLAIMED)
 
     def _on_focus_enter(self, controller):
-        self._typing_area.unblur()
+        self.typing_area.unblur()
 
     def _on_focus_leave(self, controller):
-        self._typing_area.blur()
-        # self._typing_area.clear_display_character()
-        # self._stats_bar.reset_current_string_counters()
-        # self._start_new_string()
+        self.typing_area.blur()
 
     def _on_key_pressed(self, controller, keyval, keycode, state):
         current_string_length = len(self._string_to_type)
@@ -73,21 +64,21 @@ class TypingController(Gtk.Box):
         self._key_time_start = now
 
         char = chr(unicode_val)
-        self._typing_area.update_display_character(char)
+        self.typing_area.key_display_label.set_text(char)
 
         curr_char = self._string_to_type[self._string_to_type_pointer]
         is_correct = curr_char == char
 
-        self._stats_bar.record_keystroke(is_correct)
-        self._char_stats.update_stat(curr_char, elapsed, is_correct)
+        self.stats_bar.performance_stats.record_keystroke(is_correct)
+        self.char_stats.update_stat(curr_char, elapsed, is_correct)
 
         if is_correct:
             self._string_to_type_pointer += 1
 
             if self._string_to_type_pointer == current_string_length:
-                self._stats_bar.update_performance_stats(current_string_length)
-                self._stats_bar.update_daily_goal_stats(now - self._string_time_start)
-                self._char_stats.save_data()
+                self.stats_bar.update_performance_stats(current_string_length)
+                self.stats_bar.update_daily_goal_stats(now - self._string_time_start)
+                self.char_stats.save_data()
                 self._start_new_string()
         else:
             self._missed_keys_indices.add(self._string_to_type_pointer)
@@ -96,15 +87,15 @@ class TypingController(Gtk.Box):
         return True
 
     def _start_new_string(self):
-        self._string_to_type = self._string_generator.generate()
+        self._string_to_type = self.string_generator.generate()
         self._string_to_type_pointer = 0
         self._missed_keys_indices.clear()
         self._string_time_start = time.monotonic()
-        self._typing_area.clear_display_character()
+        self.typing_area.key_display_label.set_text("")
         self._render()
 
     def _render(self):
-        self._typing_area.render(
+        self.typing_area.render(
             self._string_to_type,
             self._string_to_type_pointer,
             self._missed_keys_indices,
@@ -113,13 +104,13 @@ class TypingController(Gtk.Box):
     def _attach_controllers(self):
         key_controller = Gtk.EventControllerKey()
         key_controller.connect("key-pressed", self._on_key_pressed)
-        self._typing_area.add_controller(key_controller)
+        self.typing_area.add_controller(key_controller)
 
         focus_controller = Gtk.EventControllerFocus()
         focus_controller.connect("enter", self._on_focus_enter)
         focus_controller.connect("leave", self._on_focus_leave)
-        self._typing_area.add_controller(focus_controller)
+        self.typing_area.add_controller(focus_controller)
 
         click_gesture = Gtk.GestureClick()
         click_gesture.connect("pressed", self._on_clicked)
-        self._typing_area.add_controller(click_gesture)
+        self.typing_area.add_controller(click_gesture)
