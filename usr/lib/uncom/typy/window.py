@@ -9,8 +9,9 @@ from settings_dialog import show_settings
 class WindowMain(Gtk.ApplicationWindow):
     def __init__(self, **kargs):
         super().__init__(**kargs, title="typy")
-        self.set_resizable(False)
-        self.set_default_size(500, 300)
+        self.set_resizable(True)
+        self.set_default_size(700, 300)
+        self.set_size_request(600, 300)
 
         self.load_css()
         self._build_ui()
