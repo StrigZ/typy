@@ -1,8 +1,13 @@
 import math
 import random
 
+from app_settings import get_app_settings
+
+
 MISS_WEIGHT = 2
 SLOW_WEIGHT = 1
+
+app_settings = get_app_settings()
 
 
 class StringGenerator:
@@ -10,8 +15,7 @@ class StringGenerator:
         self._word_list = word_list
         self._char_stats = char_stats
 
-    # TODO: add settings to change max_chars
-    def generate(self, max_chars: int = 50):
+    def generate(self):
         words = []
         total_length = 0
 
@@ -20,7 +24,7 @@ class StringGenerator:
             word, _freq = random.choices(self._word_list, weights=weights, k=1)[0]
 
             added_length = len(word) + (1 if words else 0)  # +1 for the space
-            if total_length + added_length > max_chars and words:
+            if total_length + added_length > app_settings.get_max_chars() and words:
                 break
 
             words.append(word)

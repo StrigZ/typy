@@ -3,6 +3,9 @@ from gi.repository import Adw, Gtk
 from constants import _
 
 from typing_controller import TypingController
+from app_settings import get_app_settings
+
+app_settings = get_app_settings()
 
 
 class SettingsDialog(Adw.PreferencesDialog):
@@ -15,10 +18,11 @@ class SettingsDialog(Adw.PreferencesDialog):
 
         page.add(self._build_typing_group())
         page.add(self._build_daily_goal_group())
+        page.add(self._build_string_length_group())
         # page.add(self._build_language_group())
 
     def _build_typing_group(self) -> Adw.PreferencesGroup:
-        group = Adw.PreferencesGroup(title=_("Typing"))
+        group = Adw.PreferencesGroup(title=_("Stats"))
 
         reset_row = Adw.ActionRow(title=_("Reset stats"))
         reset_button = Gtk.Button(label=_("Reset"), valign=Gtk.Align.CENTER)
@@ -52,6 +56,20 @@ class SettingsDialog(Adw.PreferencesDialog):
         )
         reset_row.add_suffix(reset_button)
         group.add(reset_row)
+
+        return group
+
+    def _build_string_length_group(self) -> Adw.PreferencesGroup:
+        group = Adw.PreferencesGroup(title=_("Typing"))
+
+        length_row = Adw.SpinRow.new_with_range(50, 150, 10)
+        length_row.set_title(_("String length"))
+        length_row.set_value(app_settings.get_max_chars())
+        length_row.connect(
+            "notify::value",
+            lambda row, param: app_settings.set_max_chars(int(row.get_value())),
+        )
+        group.add(length_row)
 
         return group
 
