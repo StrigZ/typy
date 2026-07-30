@@ -128,3 +128,7 @@ class TypingController(Gtk.Box):
         click_gesture = Gtk.GestureClick()
         click_gesture.connect("pressed", self._on_clicked)
         self.typing_area.add_controller(click_gesture)
+
+    def deactivate(self):
+        self.typing_area.blur()
+        self._reset_string_progress()

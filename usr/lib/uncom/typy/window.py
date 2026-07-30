@@ -45,6 +45,12 @@ class WindowMain(Gtk.ApplicationWindow):
         )
         main.append(settings_button)
 
+        self.connect("notify::is-active", self._on_window_active_changed)
+
+    def _on_window_active_changed(self, window, param):
+        if not self.is_active():
+            self.typing_controller.deactivate()
+
     def on_activate_key_pressed(self, controller, keyval, keycode, state):
         if (
             keyval in (Gdk.KEY_Return, Gdk.KEY_KP_Enter)
