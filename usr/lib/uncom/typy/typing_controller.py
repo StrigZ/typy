@@ -3,7 +3,6 @@ import time
 from gi.repository import Gdk, Gtk
 
 from char_stats import CharStats
-from constants import WORD_LIST
 from stats_bar import StatsBar
 from typing_area import TypingArea
 from string_generator import StringGenerator
@@ -19,9 +18,12 @@ class TypingController(Gtk.Box):
         app_settings.connect(
             "notify::string-length", lambda *a: self._start_new_string()
         )
+        app_settings.connect(
+            "notify::string-language", lambda *a: self._start_new_string()
+        )
 
         self.char_stats = CharStats()
-        self.string_generator = StringGenerator(WORD_LIST, self.char_stats)
+        self.string_generator = StringGenerator(self.char_stats)
 
         self.stats_bar = StatsBar()
         self.append(self.stats_bar)
@@ -39,6 +41,8 @@ class TypingController(Gtk.Box):
         self._key_time_start = time.monotonic()
         self._string_time_start = time.monotonic()
 
+        self.stats_bar.performance_stats.start_new_string()
+
     def _on_clicked(self, gesture, n_press, x, y):
         self.typing_area.grab_focus()
         gesture.set_state(Gtk.EventSequenceState.CLAIMED)
@@ -46,6 +50,7 @@ class TypingController(Gtk.Box):
     def _on_focus_enter(self, controller):
         self.typing_area.unblur()
 
+    # TODO: RESET CURRENT STRING
     def _on_focus_leave(self, controller):
         self.typing_area.blur()
 
@@ -91,6 +96,8 @@ class TypingController(Gtk.Box):
         self._string_to_type_pointer = 0
         self._missed_keys_indices.clear()
         self._string_time_start = time.monotonic()
+        self._key_time_start = time.monotonic()
+        self.stats_bar.performance_stats.start_new_string()
         self.typing_area.key_display_label.set_text("")
         self._render()
 
