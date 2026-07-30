@@ -29,6 +29,7 @@ class TypingController(Gtk.Box):
         self.append(self.stats_bar)
 
         self._string_to_type = self.string_generator.generate()
+        self._is_first_keystroke = True
         self._string_to_type_pointer = 0
         self._missed_keys_indices = set()
 
@@ -65,7 +66,13 @@ class TypingController(Gtk.Box):
             return True
 
         now = time.monotonic()
-        elapsed = now - self._key_time_start
+        if self._is_first_keystroke:
+            self.stats_bar.performance_stats.string_start_time = now
+            self._string_time_start = now
+            elapsed = None
+        else:
+            elapsed = now - self._key_time_start
+
         self._key_time_start = now
 
         char = chr(unicode_val)
@@ -75,7 +82,11 @@ class TypingController(Gtk.Box):
         is_correct = curr_char == char
 
         self.stats_bar.performance_stats.record_keystroke(is_correct)
-        self.char_stats.update_stat(curr_char, elapsed, is_correct)
+        self.char_stats.update_stat(
+            curr_char, elapsed, is_correct, skip_timing=self._is_first_keystroke
+        )
+
+        self._is_first_keystroke = False
 
         if is_correct:
             self._string_to_type_pointer += 1
@@ -98,6 +109,7 @@ class TypingController(Gtk.Box):
     def _reset_string_progress(self):
         self._string_to_type_pointer = 0
         self._missed_keys_indices.clear()
+        self._is_first_keystroke = True
 
         self._string_time_start = time.monotonic()
         self._key_time_start = time.monotonic()

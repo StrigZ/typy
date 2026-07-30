@@ -24,11 +24,17 @@ class CharStats:
     def __init__(self):
         self.data: dict[str, CharStat] = self._load_data()
 
-    def update_stat(self, char: str, elapsed: float, is_correct: bool):
+    def update_stat(
+        self, char: str, elapsed: float | None, is_correct: bool, skip_timing=False
+    ):
         stat = self.get_stat(char)
 
         if not is_correct:
             stat["miss"] += 1
+            return
+
+        # First keystroke = speed is ignored
+        if skip_timing or elapsed is None:
             return
 
         if elapsed > TIME_CEILING:

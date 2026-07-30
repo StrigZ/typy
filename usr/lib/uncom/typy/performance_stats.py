@@ -20,12 +20,12 @@ class PerformanceStats:
     def __init__(self):
         self.averages: PerformanceAverages = self._load_data()
 
-        self.string_start_time = time.monotonic()
+        self.string_start_time: None | float = None
         self.keystrokes = 0
         self.mistakes = 0
 
     def reset_counters(self):
-        self.string_start_time = time.monotonic()
+        self.string_start_time = None
         self.keystrokes = 0
         self.mistakes = 0
 
@@ -35,6 +35,9 @@ class PerformanceStats:
             self.mistakes += 1
 
     def get_current_wpm(self, chars_typed: int) -> float:
+        if self.string_start_time is None:
+            return 0.0
+
         elapsed_minutes = (time.monotonic() - self.string_start_time) / 60
         if elapsed_minutes <= 0:
             return 0.0
