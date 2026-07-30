@@ -24,7 +24,7 @@ class PerformanceStats:
         self.keystrokes = 0
         self.mistakes = 0
 
-    def start_new_string(self):
+    def reset_counters(self):
         self.string_start_time = time.monotonic()
         self.keystrokes = 0
         self.mistakes = 0

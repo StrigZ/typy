@@ -41,7 +41,7 @@ class TypingController(Gtk.Box):
         self._key_time_start = time.monotonic()
         self._string_time_start = time.monotonic()
 
-        self.stats_bar.performance_stats.start_new_string()
+        self.stats_bar.performance_stats.reset_counters()
 
     def _on_clicked(self, gesture, n_press, x, y):
         self.typing_area.grab_focus()
@@ -50,9 +50,9 @@ class TypingController(Gtk.Box):
     def _on_focus_enter(self, controller):
         self.typing_area.unblur()
 
-    # TODO: RESET CURRENT STRING
     def _on_focus_leave(self, controller):
         self.typing_area.blur()
+        self._reset_string_progress()
 
     def _on_key_pressed(self, controller, keyval, keycode, state):
         current_string_length = len(self._string_to_type)
@@ -93,12 +93,19 @@ class TypingController(Gtk.Box):
 
     def _start_new_string(self):
         self._string_to_type = self.string_generator.generate()
+        self._reset_string_progress()
+
+    def _reset_string_progress(self):
         self._string_to_type_pointer = 0
         self._missed_keys_indices.clear()
+
         self._string_time_start = time.monotonic()
         self._key_time_start = time.monotonic()
-        self.stats_bar.performance_stats.start_new_string()
+
+        self.stats_bar.performance_stats.reset_counters()
+
         self.typing_area.key_display_label.set_text("")
+
         self._render()
 
     def _render(self):

@@ -36,7 +36,6 @@ class StatsBar(Gtk.Box):
         )
 
         self.performance_stats.update_and_save_averages(string_length)
-        self.performance_stats.start_new_string()
 
     def update_daily_goal_stats(self, elapsed: float):
         self.daily_goal.increment(elapsed)
