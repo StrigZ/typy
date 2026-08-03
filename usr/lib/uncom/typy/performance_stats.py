@@ -10,7 +10,8 @@ EMA_ALPHA = 0.2  # how fast the running average adapts to each new completed str
 
 
 @dataclass
-class PerformanceAverages:
+class Performance:
+    best_wpm: float = 0.0
     avg_wpm: float = 0.0
     avg_accuracy: float = 0.0
     strings_completed: int = 0
@@ -18,7 +19,7 @@ class PerformanceAverages:
 
 class PerformanceStats:
     def __init__(self):
-        self.averages: PerformanceAverages = self._load_data()
+        self.performance: Performance = self._load_data()
 
         self.string_start_time: None | float = None
         self.keystrokes = 0
@@ -54,34 +55,42 @@ class PerformanceStats:
         wpm = self.get_current_wpm(chars_typed)
         accuracy = self.get_current_accuracy()
 
-        n = self.averages.strings_completed
+        n = self.performance.strings_completed
         if n == 0:
-            self.averages.avg_wpm = wpm
-            self.averages.avg_accuracy = accuracy
+            self.performance.best_wpm = wpm
+            self.performance.avg_wpm = wpm
+            self.performance.avg_accuracy = accuracy
         else:
-            self.averages.avg_wpm = (
-                EMA_ALPHA * wpm + (1 - EMA_ALPHA) * self.averages.avg_wpm
+            self.performance.best_wpm = max(self.performance.best_wpm, wpm)
+
+            self.performance.avg_wpm = (
+                EMA_ALPHA * wpm + (1 - EMA_ALPHA) * self.performance.avg_wpm
             )
-            self.averages.avg_accuracy = (
-                EMA_ALPHA * accuracy + (1 - EMA_ALPHA) * self.averages.avg_accuracy
+            self.performance.avg_accuracy = (
+                EMA_ALPHA * accuracy + (1 - EMA_ALPHA) * self.performance.avg_accuracy
             )
 
-        self.averages.strings_completed += 1
+        self.performance.strings_completed += 1
         self._save_data()
 
     def _save_data(self):
         ensure_folder_exists(os.path.dirname(PERFORMANCE_STATS_FILE))
         with open(PERFORMANCE_STATS_FILE, "w", encoding="utf-8") as f:
-            json.dump(vars(self.averages), f)
+            json.dump(vars(self.performance), f)
 
-    def _load_data(self) -> PerformanceAverages:
+    def _load_data(self) -> Performance:
         try:
             with open(PERFORMANCE_STATS_FILE, "r", encoding="utf-8") as f:
                 raw = json.load(f)
-            return PerformanceAverages(**raw)
+            return Performance(
+                best_wpm=raw.get("best_wpm", 0.0),
+                avg_wpm=raw.get("avg_wpm", 0.0),
+                avg_accuracy=raw.get("avg_accuracy", 0.0),
+                strings_completed=raw.get("strings_completed", 0),
+            )
         except (FileNotFoundError, json.JSONDecodeError):
-            return PerformanceAverages()
+            return Performance()
 
     def reset_data(self):
-        self.averages = PerformanceAverages()
+        self.performance = Performance()
         delete_file_if_exists(PERFORMANCE_STATS_FILE)
