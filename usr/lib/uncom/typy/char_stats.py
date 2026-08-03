@@ -42,6 +42,9 @@ class CharStats:
     def update_stat(
         self, char: str, elapsed: float | None, is_correct: bool, skip_timing=False
     ):
+        if not char.isalpha():
+            return
+
         stat = self.get_stat(char)
 
         if not is_correct:
