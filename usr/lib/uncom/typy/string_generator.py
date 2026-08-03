@@ -3,6 +3,7 @@ import random
 
 from app_settings import get_app_settings
 from word_list import get_word_list
+from char_stats import CharStats
 
 MISS_WEIGHT = 2
 SLOW_WEIGHT = 1
@@ -12,7 +13,7 @@ word_list = get_word_list()
 
 
 class StringGenerator:
-    def __init__(self, char_stats):
+    def __init__(self, char_stats: CharStats):
         self._char_stats = char_stats
 
     def generate(self):
@@ -34,12 +35,11 @@ class StringGenerator:
 
         return " ".join(words)
 
-    def _get_word_weight(self, word: str, freq: int) -> float:
+    def _get_word_weight(self, word: str, freq: int):
         freq_score = math.log10(freq + 1)
-
         mistake_score = 0
         for c in word:
-            stat = self._char_stats.get_stat(c)
-            mistake_score += stat["miss"] * MISS_WEIGHT + stat["slow"] * SLOW_WEIGHT
-
+            stat = self._char_stats.peek_stat(c)
+            if stat:
+                mistake_score += stat["miss"] * MISS_WEIGHT + stat["slow"] * SLOW_WEIGHT
         return freq_score + mistake_score

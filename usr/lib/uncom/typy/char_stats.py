@@ -75,7 +75,10 @@ class CharStats:
             stat["slow"] = max(0, stat["slow"] - 1)
             stat["miss"] = max(0, stat["miss"] - 1)
 
-    def get_stat(self, char: str):
+    def peek_stat(self, char: str) -> CharStat | None:
+        return self.data.get(char)
+
+    def get_stat(self, char: str) -> CharStat:
         if char not in self.data:
             self._add_new_char(char)
         return self.data[char]
