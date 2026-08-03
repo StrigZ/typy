@@ -3,8 +3,11 @@ import os
 import time
 from dataclasses import dataclass
 
-from constants import PERFORMANCE_STATS_FILE
+from constants import USER_DATA_DIR
 from utility import ensure_folder_exists, delete_file_if_exists
+from app_settings import get_app_settings
+
+app_settings = get_app_settings()
 
 EMA_ALPHA = 0.2  # how fast the running average adapts to each new completed string
 
@@ -19,11 +22,23 @@ class Performance:
 
 class PerformanceStats:
     def __init__(self):
-        self.performance: Performance = self._load_data()
+        self.path = os.path.join(
+            USER_DATA_DIR, f"performance_{app_settings.get_string_language()}.json"
+        )
+        app_settings.connect("notify::string-language", self.on_language_change)
+
+        self.performance: Performance = self._load()
 
         self.string_start_time: None | float = None
         self.keystrokes = 0
         self.mistakes = 0
+
+    def on_language_change(self, obj, _pspec):
+        self.path = os.path.join(
+            USER_DATA_DIR, f"performance_{obj.props.string_language}.json"
+        )
+
+        self.performance: Performance = self._load()
 
     def reset_counters(self):
         self.string_start_time = None
@@ -74,13 +89,13 @@ class PerformanceStats:
         self._save_data()
 
     def _save_data(self):
-        ensure_folder_exists(os.path.dirname(PERFORMANCE_STATS_FILE))
-        with open(PERFORMANCE_STATS_FILE, "w", encoding="utf-8") as f:
+        ensure_folder_exists(os.path.dirname(self.path))
+        with open(self.path, "w", encoding="utf-8") as f:
             json.dump(vars(self.performance), f)
 
-    def _load_data(self) -> Performance:
+    def _load(self) -> Performance:
         try:
-            with open(PERFORMANCE_STATS_FILE, "r", encoding="utf-8") as f:
+            with open(self.path, "r", encoding="utf-8") as f:
                 raw = json.load(f)
             return Performance(
                 best_wpm=raw.get("best_wpm", 0.0),
@@ -93,4 +108,4 @@ class PerformanceStats:
 
     def reset_data(self):
         self.performance = Performance()
-        delete_file_if_exists(PERFORMANCE_STATS_FILE)
+        delete_file_if_exists(self.path)
