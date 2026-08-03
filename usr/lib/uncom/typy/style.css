@@ -1,7 +1,6 @@
 .typing-field {
     filter: blur(5px);
     transition: opacity 200ms ease;
-    position: relative;
 }
 
 .typing-field-container.active .typing-field {
