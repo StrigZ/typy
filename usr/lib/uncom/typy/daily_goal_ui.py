@@ -29,7 +29,29 @@ class DailyGoalUI(Gtk.Box):
 
         self.checkmark_label.set_visible(is_reached)
 
+    def update_streak(self, streak: int):
+        self.streak_count_label.set_text(str(streak))
+
+        if streak > 0:
+            self.streak_label.add_css_class("lit")
+        else:
+            self.streak_label.remove_css_class("lit")
+
     def _build_ui(self):
+        streak_box = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL,
+            valign=Gtk.Align.CENTER,
+            spacing=4,
+        )
+
+        self.streak_label = Gtk.Label(label="🔥")
+        self.streak_label.add_css_class("streak-flame")
+        streak_box.append(self.streak_label)
+
+        self.streak_count_label = Gtk.Label(valign=Gtk.Align.CENTER)
+        streak_box.append(self.streak_count_label)
+        self.append(streak_box)
+
         title_label = Gtk.Label()
         title_label.set_text(_("Daily goal"))
         self.append(title_label)

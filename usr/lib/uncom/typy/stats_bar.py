@@ -52,6 +52,7 @@ class StatsBar(Gtk.Box):
             self.daily_goal.goal_in_minutes,
             self.daily_goal.get_progress_in_fractions(),
         )
+        self.daily_goal_ui.update_streak(self.daily_goal.get_streak())
 
     def _build_ui(self):
 
@@ -63,4 +64,6 @@ class StatsBar(Gtk.Box):
             self.daily_goal.goal_in_minutes,
             self.daily_goal.get_progress_in_fractions(),
         )
+        self.daily_goal_ui.update_streak(self.daily_goal.get_streak())
+
         self.append(self.daily_goal_ui)

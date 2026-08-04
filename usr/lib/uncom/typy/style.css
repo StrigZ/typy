@@ -33,3 +33,20 @@
 progressbar.goal-reached progress {
     background-color: #4caf50;
 }
+
+.streak-flame {
+    color: var(--text-muted, #b4b2a9);
+    font-size: 15px;
+    filter: grayscale(100%);
+}
+
+.streak-flame.lit {
+    filter: grayscale(0);
+    color: #ef9f27;
+    animation: flame-pulse 2s ease-in-out infinite;
+}
+
+@keyframes flame-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.65; }
+}
