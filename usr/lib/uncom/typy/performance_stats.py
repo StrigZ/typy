@@ -2,6 +2,7 @@ import json
 import os
 import time
 from dataclasses import dataclass
+from gi.repository import GObject
 
 from constants import USER_DATA_DIR
 from utility import ensure_folder_exists, delete_file_if_exists
@@ -20,8 +21,13 @@ class Performance:
     strings_completed: int = 0
 
 
-class PerformanceStats:
+class PerformanceStats(GObject.Object):
+    __gsignals__ = {
+        "new-best-wpm": (GObject.SignalFlags.RUN_FIRST, None, (float,)),
+    }
+
     def __init__(self):
+        super().__init__()
         self.path = os.path.join(
             USER_DATA_DIR, f"performance_{app_settings.string_language}.json"
         )
@@ -73,10 +79,14 @@ class PerformanceStats:
         n = self.performance.strings_completed
         if n == 0:
             self.performance.best_wpm = wpm
+            self.emit("new-best-wpm", wpm)
+
             self.performance.avg_wpm = wpm
             self.performance.avg_accuracy = accuracy
         else:
-            self.performance.best_wpm = max(self.performance.best_wpm, wpm)
+            if wpm > self.performance.best_wpm:
+                self.performance.best_wpm = wpm
+                self.emit("new-best-wpm", wpm)
 
             self.performance.avg_wpm = (
                 EMA_ALPHA * wpm + (1 - EMA_ALPHA) * self.performance.avg_wpm

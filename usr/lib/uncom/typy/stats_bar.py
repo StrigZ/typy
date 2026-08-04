@@ -23,6 +23,11 @@ class StatsBar(Gtk.Box):
             lambda obj, _pspec: self.set_daily_goal_minutes(obj.props.daily_goal),
         )
 
+        self.performance_stats.connect("new-best-wpm", self._on_new_best_wpm)
+
+    def _on_new_best_wpm(self, obj, wpm: float):
+        self.performance_stats_ui.flash_new_best()
+
     def set_daily_goal_minutes(self, minutes: int):
         self.daily_goal.set_goal(minutes)
         self.daily_goal_ui.update(
