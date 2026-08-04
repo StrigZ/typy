@@ -23,7 +23,7 @@ class Performance:
 class PerformanceStats:
     def __init__(self):
         self.path = os.path.join(
-            USER_DATA_DIR, f"performance_{app_settings.get_string_language()}.json"
+            USER_DATA_DIR, f"performance_{app_settings.string_language}.json"
         )
         app_settings.connect("notify::string-language", self.on_language_change)
 

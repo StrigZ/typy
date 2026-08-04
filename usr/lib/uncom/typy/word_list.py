@@ -16,7 +16,7 @@ else:
 
 class WordList:
     def __init__(self) -> None:
-        self.words = self._load(app_settings.get_string_language())
+        self.words = self._load(app_settings.string_language)
         app_settings.connect("notify::string-language", self.on_language_change)
 
     def get_words(self):

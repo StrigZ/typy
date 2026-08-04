@@ -64,15 +64,17 @@ class SettingsDialog(Adw.PreferencesDialog):
 
         string_length_row = Adw.SpinRow.new_with_range(50, 150, 10)
         string_length_row.set_title(_("String length"))
-        string_length_row.set_value(app_settings.get_string_length())
+        string_length_row.set_value(app_settings.string_length)
         string_length_row.connect(
             "notify::value",
-            lambda row, param: app_settings.set_string_length(int(row.get_value())),
+            lambda row, param: setattr(
+                app_settings, "string_length", int(row.get_value())
+            ),
         )
         group.add(string_length_row)
 
         language_list = Gtk.StringList(strings=["ru", "en"])
-        selected_index = language_list.find(app_settings.get_string_language())
+        selected_index = language_list.find(app_settings.string_language)
 
         # Prevent crashing if language is not found
         if selected_index == Gtk.INVALID_LIST_POSITION:
@@ -80,13 +82,13 @@ class SettingsDialog(Adw.PreferencesDialog):
 
         string_language_row = Adw.ComboRow(
             model=language_list,
-            selected=language_list.find(app_settings.get_string_language()),
+            selected=language_list.find(app_settings.string_language),
         )
         string_language_row.set_title(_("Language"))
 
         def on_language_changed(combo_row, _pspec):
             selected = combo_row.get_selected_item().get_string()
-            app_settings.set_string_language(selected)
+            app_settings.string_language = selected
 
         string_language_row.connect("notify::selected", on_language_changed)
         group.add(string_language_row)

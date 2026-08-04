@@ -26,7 +26,7 @@ class CharStat(TypedDict):
 class CharStats:
     def __init__(self):
         self.path = os.path.join(
-            USER_DATA_DIR, f"stats_{app_settings.get_string_language()}.json"
+            USER_DATA_DIR, f"stats_{app_settings.string_language}.json"
         )
 
         self.data: dict[str, CharStat] = self._load()
