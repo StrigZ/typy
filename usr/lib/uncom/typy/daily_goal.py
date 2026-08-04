@@ -5,6 +5,10 @@ from datetime import date, timedelta
 from constants import DAILY_GOAL_FILE
 from utility import ensure_folder_exists
 
+from app_settings import get_app_settings
+
+app_settings = get_app_settings()
+
 
 class DailyGoal:
     def __init__(self):
@@ -14,7 +18,9 @@ class DailyGoal:
         today_data = self.data.get(today, {})
 
         self.date = today
-        self.goal_in_minutes = today_data.get("goal_in_minutes", 15)
+        self.goal_in_minutes = today_data.get(
+            "goal_in_minutes", app_settings.daily_goal
+        )
         self.elapsed_in_minutes = today_data.get("elapsed_in_minutes", 0.0)
 
         self._check_new_day()

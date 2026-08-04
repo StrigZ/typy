@@ -6,13 +6,17 @@ from utility import ensure_folder_exists
 from gi.repository import GObject
 
 
-DEFAULT_MAX_CHARS = 100
-DEFAULT_LANGUAGE = "en"
+# DEFAULTS
+
+MAX_CHARS = 100
+LANGUAGE = "en"
+DAILY_GOAL = 15
 
 
 class AppSettings(GObject.Object):
-    string_length = GObject.Property(type=int, default=DEFAULT_MAX_CHARS)
-    string_language = GObject.Property(type=str, default=DEFAULT_LANGUAGE)
+    string_length = GObject.Property(type=int, default=MAX_CHARS)
+    string_language = GObject.Property(type=str, default=LANGUAGE)
+    daily_goal = GObject.Property(type=int, default=DAILY_GOAL)
 
     def __init__(self):
         super().__init__()

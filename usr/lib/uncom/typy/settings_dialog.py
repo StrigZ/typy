@@ -44,7 +44,9 @@ class SettingsDialog(Adw.PreferencesDialog):
         set_goal_row.set_value(stats_bar.daily_goal.goal_in_minutes)
         set_goal_row.connect(
             "notify::value",
-            lambda row, param: stats_bar.set_daily_goal_minutes(int(row.get_value())),
+            lambda row, param: setattr(
+                app_settings, "daily_goal", int(row.get_value())
+            ),
         )
         group.add(set_goal_row)
 

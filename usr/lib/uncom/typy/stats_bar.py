@@ -4,6 +4,9 @@ from performance_stats_ui import PerformanceStatsUI
 from performance_stats import PerformanceStats
 from daily_goal import DailyGoal
 from daily_goal_ui import DailyGoalUI
+from app_settings import get_app_settings
+
+app_settings = get_app_settings()
 
 
 class StatsBar(Gtk.Box):
@@ -14,6 +17,11 @@ class StatsBar(Gtk.Box):
         self.daily_goal = DailyGoal()
 
         self._build_ui()
+
+        app_settings.connect(
+            "notify::daily-goal",
+            lambda obj, _pspec: self.set_daily_goal_minutes(obj.props.daily_goal),
+        )
 
     def set_daily_goal_minutes(self, minutes: int):
         self.daily_goal.set_goal(minutes)
