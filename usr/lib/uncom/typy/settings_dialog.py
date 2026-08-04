@@ -7,6 +7,9 @@ from app_settings import get_app_settings
 
 app_settings = get_app_settings()
 
+name_to_code_map = {"Русский": "ru", "English": "en"}
+code_to_name_map = {code: name for name, code in name_to_code_map.items()}
+
 
 class SettingsDialog(Adw.PreferencesDialog):
     def __init__(self, typing_controller: TypingController, **kwargs):
@@ -74,8 +77,10 @@ class SettingsDialog(Adw.PreferencesDialog):
         )
         group.add(string_length_row)
 
-        language_list = Gtk.StringList(strings=["ru", "en"])
-        selected_index = language_list.find(app_settings.string_language)
+        language_list = Gtk.StringList(strings=list(name_to_code_map.keys()))
+        selected_index = language_list.find(
+            code_to_name_map[app_settings.string_language]
+        )
 
         # Prevent crashing if language is not found
         if selected_index == Gtk.INVALID_LIST_POSITION:
@@ -83,13 +88,13 @@ class SettingsDialog(Adw.PreferencesDialog):
 
         string_language_row = Adw.ComboRow(
             model=language_list,
-            selected=language_list.find(app_settings.string_language),
+            selected=selected_index,
         )
         string_language_row.set_title(_("Language"))
 
         def on_language_changed(combo_row, _pspec):
-            selected = combo_row.get_selected_item().get_string()
-            app_settings.string_language = selected
+            selected_lang = combo_row.get_selected_item().get_string()
+            app_settings.string_language = name_to_code_map[selected_lang]
 
         string_language_row.connect("notify::selected", on_language_changed)
         group.add(string_language_row)
