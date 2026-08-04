@@ -21,6 +21,15 @@ class Performance:
     strings_completed: int = 0
 
 
+@dataclass
+class StringResult:
+    wpm: float
+    accuracy: float
+    wpm_diff: float
+    accuracy_diff: float
+    is_first: bool
+
+
 class PerformanceStats(GObject.Object):
     __gsignals__ = {
         "new-best-wpm": (GObject.SignalFlags.RUN_FIRST, None, (float,)),
@@ -72,18 +81,21 @@ class PerformanceStats(GObject.Object):
         correct = self.keystrokes - self.mistakes
         return (correct / self.keystrokes) * 100
 
-    def update_and_save_averages(self, chars_typed: int):
+    def update_and_save_averages(self, chars_typed: int) -> StringResult:
         wpm = self.get_current_wpm(chars_typed)
         accuracy = self.get_current_accuracy()
+        is_first = self.performance.strings_completed == 0
 
-        n = self.performance.strings_completed
-        if n == 0:
+        if is_first:
+            wpm_diff = 0.0
+            accuracy_diff = 0.0
             self.performance.best_wpm = wpm
-            self.emit("new-best-wpm", wpm)
-
             self.performance.avg_wpm = wpm
             self.performance.avg_accuracy = accuracy
         else:
+            wpm_diff = wpm - self.performance.avg_wpm
+            accuracy_diff = accuracy - self.performance.avg_accuracy
+
             if wpm > self.performance.best_wpm:
                 self.performance.best_wpm = wpm
                 self.emit("new-best-wpm", wpm)
@@ -97,6 +109,8 @@ class PerformanceStats(GObject.Object):
 
         self.performance.strings_completed += 1
         self._save_data()
+
+        return StringResult(wpm, accuracy, wpm_diff, accuracy_diff, is_first)
 
     def _save_data(self):
         ensure_folder_exists(os.path.dirname(self.path))

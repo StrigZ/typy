@@ -1,6 +1,7 @@
 from gi.repository import Gtk, GLib
 
 from constants import _
+from performance_stats import StringResult
 
 
 class PerformanceStatsUI(Gtk.Box):
@@ -23,9 +24,32 @@ class PerformanceStatsUI(Gtk.Box):
         self.new_best_label.remove_css_class("visible")
         return False
 
-    def update(self, wpm: float, accuracy: float):
-        self.wpm_value_label.set_text(("{:.0f}wpm").format(wpm))
-        self.accuracy_value_label.set_text(("{:.0f}%").format(accuracy))
+    def update(self, result: StringResult):
+        self._set_stat(
+            self.wpm_value_label, result.wpm, result.wpm_diff, result.is_first, "wpm"
+        )
+        self._set_stat(
+            self.accuracy_value_label,
+            result.accuracy,
+            result.accuracy_diff,
+            result.is_first,
+            "%",
+        )
+
+    def _set_stat(
+        self, label: Gtk.Label, value: float, diff: float, is_first: bool, unit: str
+    ):
+        if is_first:
+            label.set_text(f"{value:.0f}{unit}")
+            return
+
+        color = "#4caf50" if diff >= 0 else "#e53935"
+        arrow = "↑" if diff >= 0 else "↓"
+        markup = (
+            f"{value:.0f}{unit} "
+            f'<span foreground="{color}" size="small">{arrow}{abs(diff):.1f}{unit}</span>'
+        )
+        label.set_markup(markup)
 
     def _build_ui(self):
         self.wpm_value_label = Gtk.Label(

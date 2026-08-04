@@ -43,12 +43,8 @@ class StatsBar(Gtk.Box):
         )
 
     def update_performance_stats(self, string_length: int):
-        self.performance_stats_ui.update(
-            self.performance_stats.get_current_wpm(string_length),
-            self.performance_stats.get_current_accuracy(),
-        )
-
-        self.performance_stats.update_and_save_averages(string_length)
+        result = self.performance_stats.update_and_save_averages(string_length)
+        self.performance_stats_ui.update(result)
 
     def update_daily_goal_stats(self, elapsed: float):
         self.daily_goal.increment(elapsed)

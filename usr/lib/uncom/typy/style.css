@@ -63,3 +63,6 @@ progressbar.goal-reached progress {
 .new-best.visible {
     opacity: 1;
 }
+
+.diff-up { color: #4caf50; font-size: 11px; }
+.diff-down { color: #e53935; font-size: 11px; }
