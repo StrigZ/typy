@@ -19,7 +19,6 @@ class SettingsDialog(Adw.PreferencesDialog):
         page.add(self._build_typing_group())
         page.add(self._build_daily_goal_group())
         page.add(self._build_stats_group())
-        # page.add(self._build_language_group())
 
     def _build_stats_group(self) -> Adw.PreferencesGroup:
         group = Adw.PreferencesGroup(title=_("Stats"))
