@@ -22,8 +22,15 @@ class StatsBar(Gtk.Box):
             "notify::daily-goal",
             lambda obj, _pspec: self.set_daily_goal_minutes(obj.props.daily_goal),
         )
-
+        self.daily_goal.connect("goal-reached", self._on_goal_reached)
         self.performance_stats.connect("new-best-wpm", self._on_new_best_wpm)
+
+    def _on_goal_reached(self, obj):
+        print(
+            f"Goal reached! {self.daily_goal.record.strings_completed} strings, "
+            f"{self.daily_goal.record.chars_typed} chars, "
+            f"avg {self.daily_goal.record.avg_wpm:.0f}wpm / {self.daily_goal.record.avg_accuracy:.0f}%"
+        )
 
     def _on_new_best_wpm(self, obj, wpm: float):
         self.performance_stats_ui.flash_new_best()
@@ -31,26 +38,28 @@ class StatsBar(Gtk.Box):
     def set_daily_goal_minutes(self, minutes: int):
         self.daily_goal.set_goal(minutes)
         self.daily_goal_ui.update(
-            self.daily_goal.goal_in_minutes,
+            self.daily_goal.record.goal_in_minutes,
             self.daily_goal.get_progress_in_fractions(),
         )
+        self.daily_goal_ui.update_streak(self.daily_goal.get_streak())
 
     def reset_daily_progress(self):
-        self.daily_goal.reset_daily_progress()
+        self.daily_goal.reset_progress()
         self.daily_goal_ui.update(
-            self.daily_goal.goal_in_minutes,
+            self.daily_goal.record.goal_in_minutes,
             self.daily_goal.get_progress_in_fractions(),
         )
 
     def update_performance_stats(self, string_length: int):
         result = self.performance_stats.update_and_save_averages(string_length)
         self.performance_stats_ui.update(result)
+        self.daily_goal.record_string(string_length, result.wpm, result.accuracy)
 
     def update_daily_goal_stats(self, elapsed: float):
-        self.daily_goal.increment(elapsed)
+        self.daily_goal.tick_progress(elapsed)
 
         self.daily_goal_ui.update(
-            self.daily_goal.goal_in_minutes,
+            self.daily_goal.record.goal_in_minutes,
             self.daily_goal.get_progress_in_fractions(),
         )
         self.daily_goal_ui.update_streak(self.daily_goal.get_streak())
@@ -62,7 +71,7 @@ class StatsBar(Gtk.Box):
 
         self.daily_goal_ui = DailyGoalUI()
         self.daily_goal_ui.update(
-            self.daily_goal.goal_in_minutes,
+            self.daily_goal.record.goal_in_minutes,
             self.daily_goal.get_progress_in_fractions(),
         )
         self.daily_goal_ui.update_streak(self.daily_goal.get_streak())

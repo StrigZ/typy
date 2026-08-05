@@ -4,41 +4,75 @@ from datetime import date, timedelta
 
 from constants import DAILY_GOAL_FILE
 from utility import ensure_folder_exists
-
+from dataclasses import dataclass, asdict, fields
 from app_settings import get_app_settings
+from gi.repository import GObject
 
 app_settings = get_app_settings()
 
 
-class DailyGoal:
+@dataclass
+class DayRecord:
+    goal_in_minutes: int = app_settings.daily_goal
+    elapsed_in_minutes: float = 0.0
+    chars_typed: int = 0
+    strings_completed: int = 0
+    wpm_sum: float = 0.0
+    accuracy_sum: float = 0.0
+
+    @property
+    def avg_wpm(self) -> float:
+        return self.wpm_sum / self.strings_completed if self.strings_completed else 0.0
+
+    @property
+    def avg_accuracy(self) -> float:
+        return (
+            self.accuracy_sum / self.strings_completed
+            if self.strings_completed
+            else 0.0
+        )
+
+    @property
+    def is_goal_reached(self) -> bool:
+        return self.elapsed_in_minutes >= self.goal_in_minutes
+
+
+class DailyGoal(GObject.Object):
+    __gsignals__ = {
+        "goal-reached": (GObject.SignalFlags.RUN_FIRST, None, ()),
+    }
+
     def __init__(self):
+        super().__init__()
+
         self._load_data()
 
         today = date.today().isoformat()
         today_data = self.data.get(today, {})
 
         self.date = today
-        self.goal_in_minutes = today_data.get(
-            "goal_in_minutes", app_settings.daily_goal
+
+        self.record = (
+            self._parse_record(today_data)
+            if today_data
+            else DayRecord(goal_in_minutes=app_settings.daily_goal)
         )
-        self.elapsed_in_minutes = today_data.get("elapsed_in_minutes", 0.0)
 
         self._check_new_day()
 
-    @property
-    def is_goal_reached(self) -> bool:
-        return self.elapsed_in_minutes >= self.goal_in_minutes
+    def _parse_record(self, raw: dict) -> DayRecord:
+        known_fields = {f.name for f in fields(DayRecord)}
+        return DayRecord(**{k: v for k, v in raw.items() if k in known_fields})
 
     def get_progress_in_fractions(self) -> float:
-        if self.goal_in_minutes <= 0:
+        if self.record.goal_in_minutes <= 0:
             return 0.0
-        return self.elapsed_in_minutes / self.goal_in_minutes
+        return self.record.elapsed_in_minutes / self.record.goal_in_minutes
 
     def get_streak(self) -> int:
-        def day_reached(day_data: dict) -> bool:
-            return day_data.get("elapsed_in_minutes", 0.0) >= day_data.get(
-                "goal_in_minutes", 1
-            )
+        def day_reached(raw: dict) -> bool:
+            rec = self._parse_record(raw)
+            return rec.elapsed_in_minutes >= rec.goal_in_minutes
 
         streak = 0
         current_date = date.today()
@@ -58,34 +92,44 @@ class DailyGoal:
 
         return streak
 
-    def increment(self, elapsed_in_seconds: float):
+    def record_string(self, chars_typed: int, wpm: float, accuracy: float):
         self._check_new_day()
-        self.elapsed_in_minutes += elapsed_in_seconds / 60
+        self.record.chars_typed += chars_typed
+        self.record.strings_completed += 1
+        self.record.wpm_sum += wpm
+        self.record.accuracy_sum += accuracy
+        self._save_data()
+
+    def tick_progress(self, elapsed_in_seconds: float):
+        self._check_new_day()
+
+        was_reached = self.record.is_goal_reached
+        self.record.elapsed_in_minutes += elapsed_in_seconds / 60
+
+        if not was_reached and self.record.is_goal_reached:
+            self.emit("goal-reached")
+
         self._save_data()
 
     def _check_new_day(self):
         today = date.today().isoformat()
-
-        # if the same day, do nothing
         if today == self.date:
             return
 
-        # if new day, reset props
         self.date = today
-        self.elapsed_in_minutes = 0.0
+        self.record = DayRecord(
+            goal_in_minutes=self.record.goal_in_minutes
+        )  # carry the goal forward, reset everything else
         self._save_data()
 
     def _save_data(self):
         ensure_folder_exists(os.path.dirname(DAILY_GOAL_FILE))
-        self.data[self.date] = {
-            "goal_in_minutes": self.goal_in_minutes,
-            "elapsed_in_minutes": self.elapsed_in_minutes,
-        }
+        self.data[self.date] = asdict(self.record)
         with open(DAILY_GOAL_FILE, "w", encoding="utf-8") as f:
             json.dump(self.data, f)
 
     def set_goal(self, goal: int):
-        self.goal_in_minutes = goal
+        self.record.goal_in_minutes = goal
         self._save_data()
 
     def _load_data(self):
@@ -95,6 +139,13 @@ class DailyGoal:
         except (FileNotFoundError, json.JSONDecodeError):
             self.data = {}
 
-    def reset_daily_progress(self):
-        self.elapsed_in_minutes = 0.0
+    def reset_progress(self):
+        self.record.elapsed_in_minutes = 0.0
+        self._save_data()
+
+    def reset_stats(self):
+        self.record.chars_typed = 0
+        self.record.strings_completed = 0
+        self.record.wpm_sum = 0
+        self.record.accuracy_sum = 0
         self._save_data()

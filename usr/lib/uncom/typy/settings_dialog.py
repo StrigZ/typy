@@ -43,7 +43,7 @@ class SettingsDialog(Adw.PreferencesDialog):
 
         set_goal_row = Adw.SpinRow.new_with_range(5, 240, 5)
         set_goal_row.set_title(_("Minutes per day"))
-        set_goal_row.set_value(stats_bar.daily_goal.goal_in_minutes)
+        set_goal_row.set_value(app_settings.daily_goal)
         set_goal_row.connect(
             "notify::value",
             lambda row, param: setattr(
@@ -52,14 +52,21 @@ class SettingsDialog(Adw.PreferencesDialog):
         )
         group.add(set_goal_row)
 
-        reset_row = Adw.ActionRow(title=_("Reset daily progress"))
-        reset_button = Gtk.Button(label=_("Reset"), valign=Gtk.Align.CENTER)
-        reset_button.connect(
-            "clicked",
-            lambda *a: stats_bar.reset_daily_progress(),
+        reset_progress_row = Adw.ActionRow(title=_("Reset daily progress"))
+        reset_progress_button = Gtk.Button(label=_("Reset"), valign=Gtk.Align.CENTER)
+        reset_progress_button.connect(
+            "clicked", lambda *a: stats_bar.reset_daily_progress()
         )
-        reset_row.add_suffix(reset_button)
-        group.add(reset_row)
+        reset_progress_row.add_suffix(reset_progress_button)
+        group.add(reset_progress_row)
+
+        reset_stats_row = Adw.ActionRow(title=_("Reset daily stats"))
+        reset_stats_button = Gtk.Button(label=_("Reset"), valign=Gtk.Align.CENTER)
+        reset_stats_button.connect(
+            "clicked", lambda *a: stats_bar.daily_goal.reset_stats()
+        )
+        reset_stats_row.add_suffix(reset_stats_button)
+        group.add(reset_stats_row)
 
         return group
 
