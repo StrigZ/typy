@@ -21,25 +21,44 @@ class SettingsDialog(Adw.PreferencesDialog):
 
         page.add(self._build_typing_group())
         page.add(self._build_daily_goal_group())
-        page.add(self._build_stats_group())
+        page.add(self._build_reset_group())
 
-    def _build_stats_group(self) -> Adw.PreferencesGroup:
-        group = Adw.PreferencesGroup(title=_("Stats"))
+    def _build_reset_group(self) -> Adw.PreferencesGroup:
+        def build_reset_row(title: str, callback):
+            reset_row = Adw.ActionRow(title=title)
+            reset_button = Gtk.Button(label=_("Reset"), valign=Gtk.Align.CENTER)
+            reset_button.connect("clicked", lambda *a: callback())
+            reset_row.add_suffix(reset_button)
 
-        reset_row = Adw.ActionRow(title=_("Reset stats"))
-        reset_button = Gtk.Button(label=_("Reset"), valign=Gtk.Align.CENTER)
-        reset_button.connect(
-            "clicked", lambda *a: self._typing_controller.char_stats.reset_data()
+            return reset_row
+
+        stats_bar = self._typing_controller.stats_bar
+        group = Adw.PreferencesGroup(title=_("Danger zone"))
+
+        reset_char_stats_row = build_reset_row(
+            _("Reset char stats"), self._typing_controller.char_stats.reset_data
         )
-        reset_row.add_suffix(reset_button)
-        group.add(reset_row)
+        group.add(reset_char_stats_row)
+
+        reset_today_stats_row = build_reset_row(
+            _("Reset today stats"), stats_bar.daily_goal.reset_stats
+        )
+        group.add(reset_today_stats_row)
+
+        reset_today_progress_row = build_reset_row(
+            _("Reset today progress"), stats_bar.reset_daily_progress
+        )
+        group.add(reset_today_progress_row)
+
+        reset_all_time_stats_row = build_reset_row(
+            _("Reset all time stats"), stats_bar.performance_stats.reset_data
+        )
+        group.add(reset_all_time_stats_row)
 
         return group
 
     def _build_daily_goal_group(self) -> Adw.PreferencesGroup:
         group = Adw.PreferencesGroup(title=_("Daily goal"))
-
-        stats_bar = self._typing_controller.stats_bar
 
         set_goal_row = Adw.SpinRow.new_with_range(5, 240, 5)
         set_goal_row.set_title(_("Minutes per day"))
@@ -51,22 +70,6 @@ class SettingsDialog(Adw.PreferencesDialog):
             ),
         )
         group.add(set_goal_row)
-
-        reset_progress_row = Adw.ActionRow(title=_("Reset daily progress"))
-        reset_progress_button = Gtk.Button(label=_("Reset"), valign=Gtk.Align.CENTER)
-        reset_progress_button.connect(
-            "clicked", lambda *a: stats_bar.reset_daily_progress()
-        )
-        reset_progress_row.add_suffix(reset_progress_button)
-        group.add(reset_progress_row)
-
-        reset_stats_row = Adw.ActionRow(title=_("Reset daily stats"))
-        reset_stats_button = Gtk.Button(label=_("Reset"), valign=Gtk.Align.CENTER)
-        reset_stats_button.connect(
-            "clicked", lambda *a: stats_bar.daily_goal.reset_stats()
-        )
-        reset_stats_row.add_suffix(reset_stats_button)
-        group.add(reset_stats_row)
 
         return group
 
