@@ -15,10 +15,12 @@ app_settings = get_app_settings()
 class DayRecord:
     goal_in_minutes: int = app_settings.daily_goal
     elapsed_in_minutes: float = 0.0
+
     chars_typed: int = 0
     strings_completed: int = 0
     wpm_sum: float = 0.0
     accuracy_sum: float = 0.0
+    best_wpm: float = 0.0
 
     @property
     def avg_wpm(self) -> float:
@@ -97,6 +99,7 @@ class DailyStats(GObject.Object):
         self.today.chars_typed += chars_typed
         self.today.strings_completed += 1
         self.today.wpm_sum += wpm
+        self.today.best_wpm = max(wpm, self.today.best_wpm)
         self.today.accuracy_sum += accuracy
         self._save_data()
 
@@ -154,8 +157,8 @@ class DailyStats(GObject.Object):
         self._save_data()
 
     def reset_stats(self):
-        self.today.chars_typed = 0
-        self.today.strings_completed = 0
-        self.today.wpm_sum = 0
-        self.today.accuracy_sum = 0
+        self.today = DayRecord(
+            goal_in_minutes=self.today.goal_in_minutes,
+            elapsed_in_minutes=self.today.elapsed_in_minutes,
+        )
         self._save_data()

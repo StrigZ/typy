@@ -81,6 +81,7 @@ class StatsDialog(Adw.Dialog):
         size_group = Gtk.SizeGroup(mode=Gtk.SizeGroupMode.HORIZONTAL)
 
         labels = [
+            (_("Best speed"), f"{stats.best_wpm:.1f}wpm"),
             (_("Average speed"), f"{stats.avg_wpm:.1f}wpm"),
             (_("Average accuracy"), f"{stats.avg_accuracy:.1f}%"),
             (_("Characters typed"), str(stats.chars_typed)),
