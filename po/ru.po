@@ -95,7 +95,7 @@ msgstr "Средняя скорость"
 #: usr/lib/uncom/typy/stats_dialog.py:85
 #, fuzzy
 msgid "Average accuracy"
-msgstr "Точность"
+msgstr "Средняя Точность"
 
 #: usr/lib/uncom/typy/stats_dialog.py:86
 msgid "Characters typed"
@@ -104,7 +104,7 @@ msgstr "Символов"
 #: usr/lib/uncom/typy/stats_dialog.py:87
 #, fuzzy
 msgid "Strings completed"
-msgstr "Длина строки"
+msgstr "Строк завершено"
 
 #: usr/lib/uncom/typy/typing_area.py:56
 msgid "Click or press Enter to start typing"
