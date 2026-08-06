@@ -14,7 +14,6 @@ APP_DIR = os.path.dirname(os.path.abspath(__file__))
 STYLE_CSS = os.path.join(APP_DIR, "style.css")
 
 USER_DATA_DIR = os.path.join(GLib.get_user_data_dir(), "typy")
-DAILY_GOAL_FILE = os.path.join(USER_DATA_DIR, "daily_goal.json")
 APP_SETTINGS_FILE = os.path.join(USER_DATA_DIR, "user_settings.json")
 
 INSTALLED_WORDS_DIR = "/usr/share/uncom/typy/words"

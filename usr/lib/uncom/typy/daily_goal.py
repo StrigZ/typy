@@ -2,7 +2,7 @@ import json
 import os
 from datetime import date, timedelta
 
-from constants import DAILY_GOAL_FILE
+from constants import USER_DATA_DIR
 from utility import ensure_folder_exists
 from dataclasses import dataclass, asdict, fields
 from app_settings import get_app_settings
@@ -44,20 +44,20 @@ class DailyGoal(GObject.Object):
 
     def __init__(self):
         super().__init__()
+        self.path = os.path.join(
+            USER_DATA_DIR, f"daily_stats_{app_settings.string_language}.json"
+        )
+        app_settings.connect("notify::string-language", self.on_language_change)
 
-        self._load_data()
+        self._load()
+        self._check_new_day()
 
-        today = date.today().isoformat()
-        today_data = self.data.get(today, {})
-
-        self.date = today
-
-        self.record = (
-            self._parse_record(today_data)
-            if today_data
-            else DayRecord(goal_in_minutes=app_settings.daily_goal)
+    def on_language_change(self, obj, _pspec):
+        self.path = os.path.join(
+            USER_DATA_DIR, f"daily_stats_{obj.props.string_language}.json"
         )
 
+        self._load()
         self._check_new_day()
 
     def _parse_record(self, raw: dict) -> DayRecord:
@@ -123,19 +123,29 @@ class DailyGoal(GObject.Object):
         self._save_data()
 
     def _save_data(self):
-        ensure_folder_exists(os.path.dirname(DAILY_GOAL_FILE))
+        ensure_folder_exists(os.path.dirname(USER_DATA_DIR))
         self.data[self.date] = asdict(self.record)
-        with open(DAILY_GOAL_FILE, "w", encoding="utf-8") as f:
+        with open(self.path, "w", encoding="utf-8") as f:
             json.dump(self.data, f)
 
     def set_goal(self, goal: int):
         self.record.goal_in_minutes = goal
         self._save_data()
 
-    def _load_data(self):
+    def _load(self):
         try:
-            with open(DAILY_GOAL_FILE, "r", encoding="utf-8") as f:
+            with open(self.path, "r", encoding="utf-8") as f:
                 self.data = json.load(f)
+                today = date.today().isoformat()
+                today_data = self.data.get(today, {})
+
+                self.date = today
+
+                self.record = (
+                    self._parse_record(today_data)
+                    if today_data
+                    else DayRecord(goal_in_minutes=app_settings.daily_goal)
+                )
         except (FileNotFoundError, json.JSONDecodeError):
             self.data = {}
 
