@@ -4,6 +4,7 @@ from constants import _, STYLE_CSS
 from typing_controller import TypingController
 
 from settings_dialog import show_settings
+from stats_dialog import show_stats
 
 
 class WindowMain(Gtk.ApplicationWindow):
@@ -39,11 +40,26 @@ class WindowMain(Gtk.ApplicationWindow):
         deactivate_click_gesture.connect("pressed", lambda *a: self.set_focus(None))
         main.add_controller(deactivate_click_gesture)
 
-        settings_button = Gtk.Button(label=_("Settings"))
+        buttons_box = Gtk.Box(halign=Gtk.Align.END, spacing=8)
+
+        stats_button = Gtk.Button(label=_("Stats"))
+        stats_button.connect(
+            "clicked",
+            lambda *a: show_stats(
+                self,
+                self.typing_controller.stats_bar.daily_goal,
+                self.typing_controller.stats_bar.performance_stats,
+            ),
+        )
+        buttons_box.append(stats_button)
+
+        settings_button = Gtk.Button(icon_name="emblem-system-symbolic")
         settings_button.connect(
             "clicked", lambda *a: show_settings(self, self.typing_controller)
         )
-        main.append(settings_button)
+        buttons_box.append(settings_button)
+
+        main.append(buttons_box)
 
         self.connect("notify::is-active", self._on_window_active_changed)
 

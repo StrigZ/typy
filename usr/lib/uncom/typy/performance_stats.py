@@ -19,6 +19,7 @@ class Performance:
     avg_wpm: float = 0.0
     avg_accuracy: float = 0.0
     strings_completed: int = 0
+    chars_typed: int = 0
 
 
 @dataclass
@@ -108,6 +109,7 @@ class PerformanceStats(GObject.Object):
             )
 
         self.performance.strings_completed += 1
+        self.performance.chars_typed += chars_typed
         self._save_data()
 
         return StringResult(wpm, accuracy, wpm_diff, accuracy_diff, is_first)
@@ -126,6 +128,7 @@ class PerformanceStats(GObject.Object):
                 avg_wpm=raw.get("avg_wpm", 0.0),
                 avg_accuracy=raw.get("avg_accuracy", 0.0),
                 strings_completed=raw.get("strings_completed", 0),
+                chars_typed=raw.get("chars_typed", 0),
             )
         except (FileNotFoundError, json.JSONDecodeError):
             return Performance()
