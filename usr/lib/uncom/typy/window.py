@@ -47,7 +47,7 @@ class WindowMain(Gtk.ApplicationWindow):
             "clicked",
             lambda *a: show_stats(
                 self,
-                self.typing_controller.stats_bar.daily_goal,
+                self.typing_controller.stats_bar.daily_stats,
                 self.typing_controller.stats_bar.performance_stats,
             ),
         )

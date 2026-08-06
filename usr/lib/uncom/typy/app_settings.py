@@ -10,13 +10,13 @@ from gi.repository import GObject
 
 MAX_CHARS = 100
 LANGUAGE = "en"
-DAILY_GOAL = 15
+DAILY_GOAL_IN_MINUTES = 15
 
 
 class AppSettings(GObject.Object):
     string_length = GObject.Property(type=int, default=MAX_CHARS)
     string_language = GObject.Property(type=str, default=LANGUAGE)
-    daily_goal = GObject.Property(type=int, default=DAILY_GOAL)
+    daily_goal = GObject.Property(type=int, default=DAILY_GOAL_IN_MINUTES)
 
     def __init__(self):
         super().__init__()

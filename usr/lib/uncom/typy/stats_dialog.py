@@ -1,12 +1,12 @@
 from gi.repository import Adw, Gtk
-from daily_goal import DailyGoal
+from daily_stats import DailyStats
 from performance_stats import PerformanceStats
 from constants import _
 
 
 class StatsDialog(Adw.Dialog):
     def __init__(
-        self, daily_stats: DailyGoal, performance_stats: PerformanceStats, **kwargs
+        self, daily_stats: DailyStats, performance_stats: PerformanceStats, **kwargs
     ):
         super().__init__(can_close=True, title="Stats", **kwargs)
         self.daily_stats = daily_stats
@@ -43,7 +43,7 @@ class StatsDialog(Adw.Dialog):
         self._build_all_time_stats()
 
     def _build_today_stats(self):
-        self.today_stats_box = self._build_stats_box(self.daily_stats.record)
+        self.today_stats_box = self._build_stats_box(self.daily_stats.today)
 
     def _build_all_time_stats(self):
         self.all_time_stats_box = self._build_stats_box(

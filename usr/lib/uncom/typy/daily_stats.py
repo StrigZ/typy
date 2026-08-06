@@ -37,7 +37,7 @@ class DayRecord:
         return self.elapsed_in_minutes >= self.goal_in_minutes
 
 
-class DailyGoal(GObject.Object):
+class DailyStats(GObject.Object):
     __gsignals__ = {
         "goal-reached": (GObject.SignalFlags.RUN_FIRST, None, ()),
     }
@@ -65,9 +65,9 @@ class DailyGoal(GObject.Object):
         return DayRecord(**{k: v for k, v in raw.items() if k in known_fields})
 
     def get_progress_in_fractions(self) -> float:
-        if self.record.goal_in_minutes <= 0:
+        if self.today.goal_in_minutes <= 0:
             return 0.0
-        return self.record.elapsed_in_minutes / self.record.goal_in_minutes
+        return self.today.elapsed_in_minutes / self.today.goal_in_minutes
 
     def get_streak(self) -> int:
         def day_reached(raw: dict) -> bool:
@@ -94,19 +94,19 @@ class DailyGoal(GObject.Object):
 
     def record_string(self, chars_typed: int, wpm: float, accuracy: float):
         self._check_new_day()
-        self.record.chars_typed += chars_typed
-        self.record.strings_completed += 1
-        self.record.wpm_sum += wpm
-        self.record.accuracy_sum += accuracy
+        self.today.chars_typed += chars_typed
+        self.today.strings_completed += 1
+        self.today.wpm_sum += wpm
+        self.today.accuracy_sum += accuracy
         self._save_data()
 
     def tick_progress(self, elapsed_in_seconds: float):
         self._check_new_day()
 
-        was_reached = self.record.is_goal_reached
-        self.record.elapsed_in_minutes += elapsed_in_seconds / 60
+        was_reached = self.today.is_goal_reached
+        self.today.elapsed_in_minutes += elapsed_in_seconds / 60
 
-        if not was_reached and self.record.is_goal_reached:
+        if not was_reached and self.today.is_goal_reached:
             self.emit("goal-reached")
 
         self._save_data()
@@ -117,19 +117,19 @@ class DailyGoal(GObject.Object):
             return
 
         self.date = today
-        self.record = DayRecord(
-            goal_in_minutes=self.record.goal_in_minutes
+        self.today = DayRecord(
+            goal_in_minutes=self.today.goal_in_minutes
         )  # carry the goal forward, reset everything else
         self._save_data()
 
     def _save_data(self):
         ensure_folder_exists(os.path.dirname(USER_DATA_DIR))
-        self.data[self.date] = asdict(self.record)
+        self.data[self.date] = asdict(self.today)
         with open(self.path, "w", encoding="utf-8") as f:
             json.dump(self.data, f)
 
     def set_goal(self, goal: int):
-        self.record.goal_in_minutes = goal
+        self.today.goal_in_minutes = goal
         self._save_data()
 
     def _load(self):
@@ -141,7 +141,7 @@ class DailyGoal(GObject.Object):
 
                 self.date = today
 
-                self.record = (
+                self.today = (
                     self._parse_record(today_data)
                     if today_data
                     else DayRecord(goal_in_minutes=app_settings.daily_goal)
@@ -150,12 +150,12 @@ class DailyGoal(GObject.Object):
             self.data = {}
 
     def reset_progress(self):
-        self.record.elapsed_in_minutes = 0.0
+        self.today.elapsed_in_minutes = 0.0
         self._save_data()
 
     def reset_stats(self):
-        self.record.chars_typed = 0
-        self.record.strings_completed = 0
-        self.record.wpm_sum = 0
-        self.record.accuracy_sum = 0
+        self.today.chars_typed = 0
+        self.today.strings_completed = 0
+        self.today.wpm_sum = 0
+        self.today.accuracy_sum = 0
         self._save_data()
