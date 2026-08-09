@@ -74,7 +74,7 @@ class DailyStats(GObject.Object):
     def get_streak(self) -> int:
         def day_reached(raw: dict) -> bool:
             rec = self._parse_record(raw)
-            return rec.elapsed_in_minutes >= rec.goal_in_minutes
+            return rec.strings_completed > 0
 
         streak = 0
         current_date = date.today()
