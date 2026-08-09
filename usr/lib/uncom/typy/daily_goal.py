@@ -1,11 +1,9 @@
-from dataclasses import dataclass, asdict, fields
+from dataclasses import dataclass
 from app_settings import get_app_settings
-from utility import ensure_folder_exists
 from constants import DAILY_GOAL_FILE
 from datetime import date, timedelta
+from json_persisted import JsonPersisted
 
-import json
-import os
 
 app_settings = get_app_settings()
 
@@ -19,13 +17,13 @@ class DayRecord:
         return self.elapsed_in_minutes >= app_settings.daily_goal
 
 
-class DailyGoal:
+class DailyGoal(JsonPersisted):
     def __init__(self) -> None:
         self._load()
 
     def get_streak(self) -> int:
         def day_active(raw: dict) -> bool:
-            rec = self._parse_record(raw)
+            rec = self._parse_record(DayRecord, raw)
             return rec.elapsed_in_minutes > 0
 
         streak = 0
@@ -66,32 +64,19 @@ class DailyGoal:
         self._save_data()
 
     def _load(self):
-        try:
-            with open(DAILY_GOAL_FILE, "r", encoding="utf-8") as f:
-                self.data = json.load(f)
+        self.data = self._load_raw(DAILY_GOAL_FILE)
+        today: str = date.today().isoformat()
+        today_data = self.data.get(today, {})
 
-                today: str = date.today().isoformat()
-                today_data = self.data.get(today, {})
+        self.today_date = today
 
-                self.today_date = today
-
-                self.today_record = (
-                    self._parse_record(today_data) if today_data else DayRecord()
-                )
-        except (FileNotFoundError, json.JSONDecodeError):
-            self.data = {}
-            self.today_date = None
-            self.today_record = DayRecord()
+        self.today_record = (
+            self._parse_record(DayRecord, today_data) if today_data else DayRecord()
+        )
 
     def _save_data(self):
-        ensure_folder_exists(os.path.dirname(DAILY_GOAL_FILE))
-        self.data[self.today_date] = asdict(self.today_record)
-        with open(DAILY_GOAL_FILE, "w", encoding="utf-8") as f:
-            json.dump(self.data, f)
-
-    def _parse_record(self, raw: dict) -> DayRecord:
-        known = {f.name for f in fields(DayRecord)}
-        return DayRecord(**{k: v for k, v in raw.items() if k in known})
+        self.data[self.today_date] = self._record_to_dict(self.today_record)
+        self._save_raw(DAILY_GOAL_FILE, self.data)
 
     def reset(self):
         self.today_record = DayRecord()

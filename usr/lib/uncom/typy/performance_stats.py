@@ -1,12 +1,13 @@
-import json
 import os
 import time
 from dataclasses import dataclass
 from gi.repository import GObject
 
 from constants import USER_DATA_DIR
-from utility import ensure_folder_exists, delete_file_if_exists
+from utility import delete_file_if_exists
 from app_settings import get_app_settings
+
+from json_persisted import JsonPersisted
 
 app_settings = get_app_settings()
 
@@ -31,7 +32,7 @@ class StringResult:
     is_first: bool
 
 
-class PerformanceStats(GObject.Object):
+class PerformanceStats(GObject.Object, JsonPersisted):
     __gsignals__ = {
         "new-best-wpm": (GObject.SignalFlags.RUN_FIRST, None, (float,)),
     }
@@ -43,7 +44,7 @@ class PerformanceStats(GObject.Object):
         )
         app_settings.connect("notify::string-language", self.on_language_change)
 
-        self.performance: Performance = self._load()
+        self._load()
 
         self.string_start_time: None | float = None
         self.keystrokes = 0
@@ -54,7 +55,7 @@ class PerformanceStats(GObject.Object):
             USER_DATA_DIR, f"performance_{obj.props.string_language}.json"
         )
 
-        self.performance: Performance = self._load()
+        self._load()
 
     def reset_counters(self):
         self.string_start_time = None
@@ -116,23 +117,13 @@ class PerformanceStats(GObject.Object):
         return StringResult(wpm, accuracy, wpm_diff, accuracy_diff, is_first)
 
     def _save_data(self):
-        ensure_folder_exists(os.path.dirname(self.path))
-        with open(self.path, "w", encoding="utf-8") as f:
-            json.dump(vars(self.performance), f)
+        self._save_raw(self.path, self._record_to_dict(self.performance))
 
-    def _load(self) -> Performance:
-        try:
-            with open(self.path, "r", encoding="utf-8") as f:
-                raw = json.load(f)
-            return Performance(
-                best_wpm=raw.get("best_wpm", 0.0),
-                avg_wpm=raw.get("avg_wpm", 0.0),
-                avg_accuracy=raw.get("avg_accuracy", 0.0),
-                strings_completed=raw.get("strings_completed", 0),
-                chars_typed=raw.get("chars_typed", 0),
-            )
-        except (FileNotFoundError, json.JSONDecodeError):
-            return Performance()
+    def _load(self):
+        raw = self._load_raw(self.path)
+        self.performance = (
+            self._parse_record(Performance, raw) if raw else Performance()
+        )
 
     def reset_data(self):
         self.performance = Performance()

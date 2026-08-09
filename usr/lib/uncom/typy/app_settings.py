@@ -1,11 +1,7 @@
-import json
-import os
-
 from constants import APP_SETTINGS_FILE
-from utility import ensure_folder_exists
 from gi.repository import GObject
 
-
+from json_persisted import JsonPersisted
 # DEFAULTS
 
 MAX_CHARS = 100
@@ -13,7 +9,7 @@ LANGUAGE = "en"
 DAILY_GOAL_IN_MINUTES = 15
 
 
-class AppSettings(GObject.Object):
+class AppSettings(GObject.Object, JsonPersisted):
     string_length = GObject.Property(type=int, default=MAX_CHARS)
     string_language = GObject.Property(type=str, default=LANGUAGE)
     daily_goal = GObject.Property(type=int, default=DAILY_GOAL_IN_MINUTES)
@@ -27,21 +23,15 @@ class AppSettings(GObject.Object):
         return [pspec.name.replace("-", "_") for pspec in self.list_properties()]
 
     def _save_data(self):
-        ensure_folder_exists(os.path.dirname(APP_SETTINGS_FILE))
         data = {name: getattr(self, name) for name in self._property_names()}
-        with open(APP_SETTINGS_FILE, "w", encoding="utf-8") as f:
-            json.dump(data, f)
+        self._save_raw(APP_SETTINGS_FILE, data)
 
     def _load_data(self):
-        try:
-            with open(APP_SETTINGS_FILE, "r", encoding="utf-8") as f:
-                data = json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError):
-            return
+        raw = self._load_raw(APP_SETTINGS_FILE)
 
         for name in self._property_names():
-            if name in data:
-                setattr(self, name, data[name])
+            if name in raw:
+                setattr(self, name, raw[name])
 
 
 _app_settings = AppSettings()
