@@ -151,6 +151,8 @@ class DailyStats(GObject.Object):
                 )
         except (FileNotFoundError, json.JSONDecodeError):
             self.data = {}
+            self.date = None
+            self.today = DayRecord(goal_in_minutes=app_settings.daily_goal)
 
     def reset_progress(self):
         self.today.elapsed_in_minutes = 0.0
