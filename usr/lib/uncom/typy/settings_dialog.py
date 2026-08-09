@@ -41,7 +41,7 @@ class SettingsDialog(Adw.PreferencesDialog):
         group.add(reset_char_stats_row)
 
         reset_today_stats_row = build_reset_row(
-            _("Reset today stats"), stats_bar.daily_stats.reset_stats
+            _("Reset today stats"), stats_bar.daily_stats.reset
         )
         group.add(reset_today_stats_row)
 

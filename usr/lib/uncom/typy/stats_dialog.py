@@ -43,7 +43,7 @@ class StatsDialog(Adw.Dialog):
         self._build_all_time_stats()
 
     def _build_today_stats(self):
-        self.today_stats_box = self._build_stats_box(self.daily_stats.today)
+        self.today_stats_box = self._build_stats_box(self.daily_stats.today_record)
 
     def _build_all_time_stats(self):
         self.all_time_stats_box = self._build_stats_box(
