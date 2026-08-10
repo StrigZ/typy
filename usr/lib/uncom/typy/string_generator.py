@@ -20,13 +20,17 @@ class StringGenerator:
         words = []
         total_length = 0
 
-        while True:
-            weights = [
-                self._get_word_weight(w, freq) for w, freq in word_list.get_words()
-            ]
-            word, _freq = random.choices(word_list.get_words(), weights=weights, k=1)[0]
+        all_words = word_list.get_words()
+        weights = (
+            [self._get_word_weight(w, freq) for w, freq in all_words]
+            if app_settings.typing_mode == "adaptive"
+            else None
+        )
 
-            added_length = len(word) + (1 if words else 0)  # +1 for the space
+        while True:
+            word, _freq = random.choices(all_words, weights=weights, k=1)[0]
+
+            added_length = len(word) + (1 if words else 0)
             if total_length + added_length > app_settings.string_length and words:
                 break
 
