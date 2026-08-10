@@ -26,3 +26,6 @@ else:
     WORDS_DIR = os.path.join(PROJECT_ROOT, "usr", "share", "uncom", "typy", "words")
 
 WORD_LIST = load_word_list(os.path.join(WORDS_DIR, "words_en.csv"))
+
+LEARNING_MIN_SAMPLES = 5
+LEARNING_ORDER = "ETAOINSRHDLUCMFYWGPBVKXJQZ"
