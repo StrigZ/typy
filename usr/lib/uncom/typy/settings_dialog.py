@@ -147,6 +147,13 @@ class SettingsDialog(Adw.PreferencesDialog):
             on_desired_wpm_change,
             "wpm",
         )
+        desired_wpm_slider_row.set_visible(app_settings.typing_mode == "learning")
+        app_settings.connect(
+            "notify::typing-mode",
+            lambda obj, _pspec: desired_wpm_slider_row.set_visible(
+                obj.props.typing_mode == "learning"
+            ),
+        )
 
         group.add(desired_wpm_slider_row)
 
