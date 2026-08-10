@@ -96,7 +96,7 @@ class TypingController(Gtk.Box):
             if self._string_to_type_pointer == current_string_length:
                 if app_settings.typing_mode != "learning":
                     self.stats_bar.update_performance_stats(current_string_length)
-                self.stats_bar.update_daily_goal_stats(now - self._string_time_start)
+                self.stats_bar.update_daily_goal(now - self._string_time_start)
                 self.char_stats.save_data()
                 self._start_new_string()
         else:

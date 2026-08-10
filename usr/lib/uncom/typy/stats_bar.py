@@ -46,7 +46,7 @@ class StatsBar(Gtk.Box):
         self.performance_stats_ui.update(result)
         self.daily_stats.record_string(string_length, result.wpm, result.accuracy)
 
-    def update_daily_goal_stats(self, elapsed: float):
+    def update_daily_goal(self, elapsed: float):
         self.daily_goal.tick_progress(elapsed)
 
         self.daily_goal_ui.update(
