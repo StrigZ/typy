@@ -8,6 +8,7 @@ MAX_CHARS = 100
 LANGUAGE = "en"
 DAILY_GOAL_IN_MINUTES = 15
 TYPING_MODE = "freeform"  # freeform, adaptive, learning
+DESIRED_WPM = 40
 
 
 class AppSettings(GObject.Object, JsonPersisted):
@@ -15,6 +16,7 @@ class AppSettings(GObject.Object, JsonPersisted):
     string_language = GObject.Property(type=str, default=LANGUAGE)
     daily_goal = GObject.Property(type=int, default=DAILY_GOAL_IN_MINUTES)
     typing_mode = GObject.Property(type=str, default=TYPING_MODE)
+    desired_wpm = GObject.Property(type=int, default=DESIRED_WPM)
 
     def __init__(self):
         super().__init__()

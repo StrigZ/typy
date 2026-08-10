@@ -1,4 +1,4 @@
-from gi.repository import Adw, Gtk
+from gi.repository import Adw, Gtk, GLib
 
 from constants import _
 
@@ -26,12 +26,21 @@ class SettingsDialog(Adw.PreferencesDialog):
         super().__init__(**kwargs)
         self._typing_controller = typing_controller
 
+        # apply slider values,
+        # if settings window closes
+        self._pending_flushes = []
+        self.connect("closed", lambda *a: self._flush_all())
+
         page = Adw.PreferencesPage()
         self.add(page)
 
         page.add(self._build_typing_group())
         page.add(self._build_daily_goal_group())
         page.add(self._build_reset_group())
+
+    def _flush_all(self):
+        for flush in self._pending_flushes:
+            flush()
 
     def _build_reset_group(self) -> Adw.PreferencesGroup:
         def build_reset_row(title: str, callback):
@@ -86,18 +95,21 @@ class SettingsDialog(Adw.PreferencesDialog):
     def _build_typing_group(self) -> Adw.PreferencesGroup:
         group = Adw.PreferencesGroup(title=_("Typing"))
 
-        string_length_row = Adw.SpinRow.new_with_range(50, 150, 10)
-        string_length_row.set_title(_("String length"))
-        string_length_row.set_value(app_settings.string_length)
-        string_length_row.connect(
-            "notify::value",
-            lambda row, param: setattr(
-                app_settings, "string_length", int(row.get_value())
-            ),
+        def on_string_length_change(new_value):
+            app_settings.string_length = new_value
+
+        string_length_row = self.create_slider_row(
+            _("String length"),
+            app_settings.string_length,
+            50,
+            150,
+            10,
+            on_string_length_change,
+            "ch",
         )
         group.add(string_length_row)
 
-        string_language_row = create_dropdown_row(
+        string_language_row = self.create_dropdown_row(
             list(language_name_to_code_map.keys()),
             language_code_to_name_map[app_settings.string_language],
             _("Language"),
@@ -110,7 +122,7 @@ class SettingsDialog(Adw.PreferencesDialog):
         string_language_row.connect("notify::selected", on_language_changed)
         group.add(string_language_row)
 
-        typing_mode_row = create_dropdown_row(
+        typing_mode_row = self.create_dropdown_row(
             list(typing_mode_name_to_code.keys()),
             typing_mode_code_to_name[app_settings.typing_mode],
             _("Mode"),
@@ -123,23 +135,94 @@ class SettingsDialog(Adw.PreferencesDialog):
         typing_mode_row.connect("notify::selected", on_typing_mode_change)
         group.add(typing_mode_row)
 
+        def on_desired_wpm_change(new_value):
+            app_settings.desired_wpm = new_value
+
+        desired_wpm_slider_row = self.create_slider_row(
+            _("Desired WPM"),
+            app_settings.desired_wpm,
+            30,
+            200,
+            5,
+            on_desired_wpm_change,
+            "wpm",
+        )
+
+        group.add(desired_wpm_slider_row)
+
         return group
 
+    def create_slider_row(
+        self, title, value, min, max, step, on_change, label_suffix=None
+    ):
+        adjustment = Gtk.Adjustment(
+            value=value, lower=min, upper=max, step_increment=step
+        )
+        scale = Gtk.Scale(
+            orientation=Gtk.Orientation.HORIZONTAL,
+            adjustment=adjustment,
+            hexpand=True,
+            valign=Gtk.Align.CENTER,
+            round_digits=0,
+        )
 
-def create_dropdown_row(options, selected_value, title):
-    options_list = Gtk.StringList(strings=options)
+        value_label = Gtk.Label(
+            label=(f"{value:0.0f}{label_suffix if label_suffix else ''}"),
+            width_chars=8,
+        )
 
-    selected_index = options_list.find(selected_value)
+        _debounce_id = None
+        _pending_value = None
 
-    # Prevent crashing if value is not found
-    if selected_index == Gtk.INVALID_LIST_POSITION:
-        selected_index = 0
+        def on_slider_changed(adj):
+            nonlocal _debounce_id, _pending_value
+            raw = adj.get_value()
+            snapped = round(raw / step) * step
+            value_label.set_label(
+                f"{snapped:0.0f}{label_suffix if label_suffix else ''}"
+            )
+            _pending_value = snapped
 
-    return Adw.ComboRow(
-        model=options_list,
-        title=title,
-        selected=selected_index,
-    )
+            if _debounce_id is not None:
+                GLib.source_remove(_debounce_id)
+
+            def commit():
+                nonlocal _debounce_id
+                _debounce_id = None
+                on_change(_pending_value)
+                return False
+
+            _debounce_id = GLib.timeout_add(300, commit)
+
+        def flush():
+            nonlocal _debounce_id
+            if _debounce_id is not None:
+                GLib.source_remove(_debounce_id)
+                _debounce_id = None
+                on_change(_pending_value)
+
+        adjustment.connect("value-changed", on_slider_changed)
+        self._pending_flushes.append(flush)
+
+        row = Adw.ActionRow(title=title, hexpand=True)
+        row.add_suffix(scale)
+        row.add_suffix(value_label)
+
+        return row
+
+    def create_dropdown_row(self, options, selected_value, title):
+        options_list = Gtk.StringList(strings=options)
+
+        selected_index = options_list.find(selected_value)
+
+        if selected_index == Gtk.INVALID_LIST_POSITION:
+            selected_index = 0
+
+        return Adw.ComboRow(
+            model=options_list,
+            title=title,
+            selected=selected_index,
+        )
 
 
 def show_settings(parent_window, typing_controller):
