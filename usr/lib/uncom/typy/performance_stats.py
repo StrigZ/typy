@@ -99,7 +99,7 @@ class PerformanceStats(GObject.Object, JsonPersisted):
             wpm_diff = wpm - self.performance.avg_wpm
             accuracy_diff = accuracy - self.performance.avg_accuracy
 
-            if wpm > self.performance.best_wpm or self.performance.best_wpm:
+            if wpm > self.performance.best_wpm or self.performance.best_wpm == 0.0:
                 self.performance.best_wpm = wpm
                 self.emit("new-best-wpm", wpm)
 
