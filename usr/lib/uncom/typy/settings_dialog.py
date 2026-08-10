@@ -7,8 +7,18 @@ from app_settings import get_app_settings
 
 app_settings = get_app_settings()
 
-name_to_code_map = {"Русский": "ru", "English": "en"}
-code_to_name_map = {code: name for name, code in name_to_code_map.items()}
+language_name_to_code_map = {"Русский": "ru", "English": "en"}
+language_code_to_name_map = {
+    code: name for name, code in language_name_to_code_map.items()
+}
+
+TYPING_MODE_CODES = ["freeform", "adaptive", "learning"]
+typing_mode_name_to_code = {
+    _("Freeform"): "freeform",
+    _("Adaptive"): "adaptive",
+    _("Learning"): "learning",
+}
+typing_mode_code_to_name = {v: k for k, v in typing_mode_name_to_code.items()}
 
 
 class SettingsDialog(Adw.PreferencesDialog):
@@ -87,29 +97,49 @@ class SettingsDialog(Adw.PreferencesDialog):
         )
         group.add(string_length_row)
 
-        language_list = Gtk.StringList(strings=list(name_to_code_map.keys()))
-        selected_index = language_list.find(
-            code_to_name_map[app_settings.string_language]
+        string_language_row = create_dropdown_row(
+            list(language_name_to_code_map.keys()),
+            language_code_to_name_map[app_settings.string_language],
+            _("Language"),
         )
-
-        # Prevent crashing if language is not found
-        if selected_index == Gtk.INVALID_LIST_POSITION:
-            selected_index = 0
-
-        string_language_row = Adw.ComboRow(
-            model=language_list,
-            selected=selected_index,
-        )
-        string_language_row.set_title(_("Language"))
 
         def on_language_changed(combo_row, _pspec):
             selected_lang = combo_row.get_selected_item().get_string()
-            app_settings.string_language = name_to_code_map[selected_lang]
+            app_settings.string_language = language_name_to_code_map[selected_lang]
 
         string_language_row.connect("notify::selected", on_language_changed)
         group.add(string_language_row)
 
+        typing_mode_row = create_dropdown_row(
+            list(typing_mode_name_to_code.keys()),
+            typing_mode_code_to_name[app_settings.typing_mode],
+            _("Mode"),
+        )
+
+        def on_typing_mode_change(combo_row, _pspec):
+            selected = combo_row.get_selected_item().get_string()
+            app_settings.typing_mode = typing_mode_name_to_code[selected]
+
+        typing_mode_row.connect("notify::selected", on_typing_mode_change)
+        group.add(typing_mode_row)
+
         return group
+
+
+def create_dropdown_row(options, selected_value, title):
+    options_list = Gtk.StringList(strings=options)
+
+    selected_index = options_list.find(selected_value)
+
+    # Prevent crashing if value is not found
+    if selected_index == Gtk.INVALID_LIST_POSITION:
+        selected_index = 0
+
+    return Adw.ComboRow(
+        model=options_list,
+        title=title,
+        selected=selected_index,
+    )
 
 
 def show_settings(parent_window, typing_controller):

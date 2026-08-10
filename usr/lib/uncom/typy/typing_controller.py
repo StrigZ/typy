@@ -22,6 +22,8 @@ class TypingController(Gtk.Box):
             "notify::string-language", lambda *a: self._start_new_string()
         )
 
+        app_settings.connect("notify::typing-mode", lambda *a: self._start_new_string())
+
         self.char_stats = CharStats()
         self.string_generator = StringGenerator(self.char_stats)
 

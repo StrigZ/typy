@@ -7,12 +7,14 @@ from json_persisted import JsonPersisted
 MAX_CHARS = 100
 LANGUAGE = "en"
 DAILY_GOAL_IN_MINUTES = 15
+TYPING_MODE = "freeform"  # freeform, adaptive, learning
 
 
 class AppSettings(GObject.Object, JsonPersisted):
     string_length = GObject.Property(type=int, default=MAX_CHARS)
     string_language = GObject.Property(type=str, default=LANGUAGE)
     daily_goal = GObject.Property(type=int, default=DAILY_GOAL_IN_MINUTES)
+    typing_mode = GObject.Property(type=str, default=TYPING_MODE)
 
     def __init__(self):
         super().__init__()
