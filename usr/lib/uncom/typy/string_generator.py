@@ -66,20 +66,18 @@ class StringGenerator:
 
     def _generate_synthetic_string(self, eligible: list[str]) -> str:
         current = self.learning_progress.get_current_learning_char_lower()
-        core = [c.lower() for c in self.learning_progress.order[:3]]
-        others = [c for c in eligible if c != current and c not in core]
+        others = [c for c in eligible if c != current]
 
         words = []
         total_length = 0
         while total_length < app_settings.string_length:
             word_len = max(3, random.randint(2, 5))
-            required = list(set(core + [current]))
-            extra_count = max(0, word_len - len(required))
+            extra_count = max(0, word_len - 1)  # -1 for the forced `current`
             extra = (
                 random.choices(others or eligible, k=extra_count) if extra_count else []
             )
 
-            chars = required + extra
+            chars = [current] + extra
             random.shuffle(chars)
             word = "".join(chars)
             words.append(word)

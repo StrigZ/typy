@@ -16,7 +16,7 @@ class LearningProgress(GObject.Object, JsonPersisted):
         super().__init__()
         self._char_stats = char_stats
         self.order = LEARNING_ORDER[app_settings.string_language]
-        self.current_index = 0
+        self.current_index = min(2, len(self.order) - 1)
         self._set_path()
         self._load()
         app_settings.connect("notify::string-language", self._on_language_change)
@@ -100,7 +100,7 @@ class LearningProgress(GObject.Object, JsonPersisted):
 
     def _load(self):
         raw = self._load_raw(self.path)
-        self.current_index = raw.get("current_index", 0)
+        self.current_index = raw.get("current_index", min(2, len(self.order) - 1))
 
     def _save(self):
         self._save_raw(self.path, {"current_index": self.current_index})
