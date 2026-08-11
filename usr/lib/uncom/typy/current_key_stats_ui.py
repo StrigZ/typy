@@ -1,5 +1,5 @@
 from gi.repository import Gtk
-from constants import _
+from constants import _, CURRENT_KEY_DISPLAY_MIN_SAMPLES
 from char_stats import CharStat
 
 
@@ -16,14 +16,14 @@ class CurrentKeyStatsUI(Gtk.Box):
 
     def update(self, char: str, char_stat: CharStat | None):
         self.current_key_label.set_label(char)
-        if char_stat:
+        if char_stat and char_stat.get("samples", 0) > CURRENT_KEY_DISPLAY_MIN_SAMPLES:
             self.wpm_value_label.set_label(
                 f"{convert_avg_time_to_wpm(char_stat['avg_time']):0.1f}wpm"
             )
             self.accuracy_value_label.set_label(f"{get_accuracy(char_stat):0.1f}%")
         else:
-            self.wpm_value_label.set_label("0wpm")
-            self.accuracy_value_label.set_label("0%")
+            self.wpm_value_label.set_label("Gathering data…")
+            self.accuracy_value_label.set_label("Gathering data…")
 
     def _build_ui(self):
         def build_stat_box(title_label_text: str, value_label: Gtk.Label):
@@ -47,10 +47,6 @@ class CurrentKeyStatsUI(Gtk.Box):
             title_label_text=_("Speed"), value_label=self.wpm_value_label
         )
 
-        self.new_best_label = Gtk.Label(label=_("NEW BEST!"))
-        self.new_best_label.add_css_class("new-best")
-
-        wpm_box.append(self.new_best_label)
         self.append(wpm_box)
 
         self.accuracy_value_label = Gtk.Label()
@@ -61,8 +57,6 @@ class CurrentKeyStatsUI(Gtk.Box):
 
 
 def get_accuracy(char_stat: CharStat) -> float:
-    if char_stat["attempts"] == 0:
-        return 0.0
     return (char_stat["samples"] / char_stat["attempts"]) * 100
 
 
