@@ -20,7 +20,8 @@ class CharStat(TypedDict):
     miss: int
     slow: int
     avg_time: float
-    samples: int
+    samples: int  # correct ones
+    attempts: int  # all
 
 
 class CharStats(JsonPersisted):
@@ -46,6 +47,7 @@ class CharStats(JsonPersisted):
             return
 
         stat = self.get_stat(char)
+        stat["attempts"] += 1
 
         if not is_correct:
             stat["miss"] += 1
@@ -91,7 +93,13 @@ class CharStats(JsonPersisted):
         delete_file_if_exists(self.path)
 
     def _add_new_char(self, char: str):
-        self.data[char] = {"miss": 0, "slow": 0, "avg_time": 0.0, "samples": 0}
+        self.data[char] = {
+            "miss": 0,
+            "slow": 0,
+            "avg_time": 0.0,
+            "samples": 0,
+            "attempts": 0,
+        }
 
     def _load(self) -> None:
         raw = self._load_raw(self.path)

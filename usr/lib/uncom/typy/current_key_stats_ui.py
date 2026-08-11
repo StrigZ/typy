@@ -20,7 +20,7 @@ class CurrentKeyStatsUI(Gtk.Box):
             self.wpm_value_label.set_label(
                 f"{convert_avg_time_to_wpm(char_stat['avg_time']):0.1f}wpm"
             )
-            self.accuracy_value_label.set_label(str(char_stat["miss"]))
+            self.accuracy_value_label.set_label(f"{get_accuracy(char_stat):0.1f}%")
         else:
             self.wpm_value_label.set_label("0wpm")
             self.accuracy_value_label.set_label("0%")
@@ -58,6 +58,12 @@ class CurrentKeyStatsUI(Gtk.Box):
             title_label_text=_("Accuracy"), value_label=self.accuracy_value_label
         )
         self.append(accuracy_box)
+
+
+def get_accuracy(char_stat: CharStat) -> float:
+    if char_stat["attempts"] == 0:
+        return 0.0
+    return (char_stat["samples"] / char_stat["attempts"]) * 100
 
 
 def convert_avg_time_to_wpm(avg_time: float):
