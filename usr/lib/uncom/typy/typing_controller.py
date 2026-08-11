@@ -16,23 +16,6 @@ class TypingController(Gtk.Box):
     def __init__(self, **kwargs):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=32, **kwargs)
 
-        app_settings.connect(
-            "notify::string-length",
-            lambda *a: self._start_new_string(),
-        )
-        app_settings.connect(
-            "notify::string-language",
-            lambda *a: self._start_new_string(),
-        )
-        app_settings.connect(
-            "notify::typing-mode",
-            lambda *a: self._start_new_string(),
-        )
-        app_settings.connect(
-            "notify::desired-wpm",
-            lambda *a: self._start_new_string(),
-        )
-
         self.char_stats = CharStats()
         self.learning_progress = LearningProgress(self.char_stats)
         self.string_generator = StringGenerator(self.learning_progress, self.char_stats)
@@ -55,6 +38,23 @@ class TypingController(Gtk.Box):
         self._string_time_start = time.monotonic()
 
         self.stats_bar.performance_stats.reset_counters()
+
+        app_settings.connect(
+            "notify::string-length",
+            lambda *a: self._start_new_string(),
+        )
+        app_settings.connect(
+            "notify::string-language",
+            lambda *a: self._start_new_string(),
+        )
+        app_settings.connect(
+            "notify::typing-mode",
+            lambda *a: self._start_new_string(),
+        )
+        app_settings.connect(
+            "notify::desired-wpm",
+            lambda *a: self._start_new_string(),
+        )
 
     def _on_clicked(self, gesture, n_press, x, y):
         self.typing_area.grab_focus()
