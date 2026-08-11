@@ -1,7 +1,6 @@
 from gi.repository import GObject
 from app_settings import get_app_settings
-from constants import LEARNING_MIN_SAMPLES, LEARNING_ORDER
-from constants import USER_DATA_DIR
+from constants import LEARNING_MIN_SAMPLES, LEARNING_ORDER, USER_DATA_DIR
 from json_persisted import JsonPersisted
 import os
 
@@ -37,13 +36,18 @@ class LearningProgress(GObject.Object, JsonPersisted):
         if not queue:
             return self.order[self.current_index]
 
+        newest = self.order[self.current_index]
+        established_queue = [c for c in queue if c != newest]
+        candidates = established_queue if established_queue else queue
+
         def gap(c: str) -> float:
             stat = self._char_stats.peek_stat(c.lower())
+            threshold = self._threshold_seconds()
             if stat is None or stat.get("samples", 0) == 0:
-                return float("inf")  # untouched = furthest from target
-            return stat["avg_time"]
+                return float("inf")
+            return stat["avg_time"] - threshold
 
-        return min(queue, key=gap)  # closest to target = smallest avg_time among queue
+        return min(candidates, key=gap)
 
     def get_current_learning_char_lower(self) -> str:
         return self.get_current_learning_char().lower()
