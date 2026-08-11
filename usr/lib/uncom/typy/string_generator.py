@@ -4,19 +4,30 @@ import random
 from app_settings import get_app_settings
 from word_list import get_word_list
 from char_stats import CharStats
+from learning_progress import LearningProgress
 
 MISS_WEIGHT = 2
 SLOW_WEIGHT = 1
+
+SYNTHETIC_UNLOCK_THRESHOLD = (
+    5  # below this many unlocked chars, generate synthetic words
+)
 
 app_settings = get_app_settings()
 word_list = get_word_list()
 
 
 class StringGenerator:
-    def __init__(self, char_stats: CharStats):
+    def __init__(self, learning_progress: LearningProgress, char_stats: CharStats):
+        self.learning_progress = learning_progress
         self._char_stats = char_stats
 
     def generate(self):
+        if app_settings.typing_mode == "learning":
+            return self._generate_learning_string()
+        return self._generate_freeform_string()
+
+    def _generate_freeform_string(self):
         words = []
         total_length = 0
 
@@ -39,6 +50,47 @@ class StringGenerator:
 
         return " ".join(words)
 
+    def _generate_learning_string(self) -> str:
+        active = self.learning_progress.get_active_chars_lower()
+        if len(active) < SYNTHETIC_UNLOCK_THRESHOLD:
+            return self._generate_synthetic_string(active)
+        return self._generate_filtered_word_string(active)
+
+    def _generate_synthetic_string(self, active: list[str]) -> str:
+        current = self.learning_progress.get_current_learning_char().lower()
+        others = [c for c in active if c != current]
+        words = []
+        total_length = 0
+        while total_length < app_settings.string_length:
+            word_len = random.randint(2, 5)
+            # build word from other active chars, then insert current at a random position
+            base = random.choices(others, k=word_len - 1) if others else []
+            insert_at = random.randint(0, len(base))
+            base.insert(insert_at, current)
+            word = "".join(base)
+            words.append(word)
+            total_length += len(word) + 1
+        return " ".join(words)
+
+    def _generate_filtered_word_string(self, active: list[str]) -> str:
+        current = self.learning_progress.get_current_learning_char().lower()
+        all_words = word_list.get_words()
+        filtered = filter_locked_chars(all_words, active)
+        filtered = [(w, f) for w, f in filtered if current in w]
+        if not filtered:
+            return self._generate_synthetic_string(active)
+        weights = [self._get_word_weight(w, freq) for w, freq in filtered]
+        words = []
+        total_length = 0
+        while total_length < app_settings.string_length:
+            word, _freq = random.choices(filtered, weights=weights, k=1)[0]
+            added = len(word) + (1 if words else 0)
+            if total_length + added > app_settings.string_length and words:
+                break
+            words.append(word)
+            total_length += added
+        return " ".join(words)
+
     def _get_word_weight(self, word: str, freq: int):
         freq_score = math.log10(freq + 1)
         mistake_score = 0
@@ -47,3 +99,15 @@ class StringGenerator:
             if stat:
                 mistake_score += stat["miss"] * MISS_WEIGHT + stat["slow"] * SLOW_WEIGHT
         return freq_score + mistake_score
+
+
+def filter_locked_chars(words: list[tuple[str, int]], unlocked_chars: list[str]):
+    def filter_fn(entry: tuple[str, int]):
+        word, freq = entry
+        for c in word:
+            if c not in unlocked_chars:
+                return False
+
+        return True
+
+    return list(filter(filter_fn, words))

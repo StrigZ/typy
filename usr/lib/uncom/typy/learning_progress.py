@@ -24,6 +24,12 @@ class LearningProgress(GObject.Object):
     def get_current_learning_char(self) -> str:
         return self.order[self.current_index]
 
+    def get_active_chars_lower(self) -> list[str]:
+        return [c.lower() for c in self.get_active_chars()]
+
+    def get_current_learning_char_lower(self) -> str:
+        return self.get_current_learning_char().lower()
+
     def check_progress(self):
         new_index = self._compute_current_index()
         if new_index != self.current_index:
@@ -31,13 +37,13 @@ class LearningProgress(GObject.Object):
             self.emit("progress-changed")
 
     def get_proficiency(self, char: str) -> float:
-        stat = self._char_stats.peek_stat(char)
+        stat = self._char_stats.peek_stat(char.lower())
         if stat is None or stat.get("samples", 0) == 0:
             return 0.0
         threshold = self._threshold_seconds()
         # avg_time at or below threshold = 1.0 (mastered speed)
         # avg_time at 2x threshold or worse = 0.0 (floor)
-        ratio = 1 - (stat["avg_time"] - threshold) / threshold
+        ratio = (2 * threshold - stat["avg_time"]) / (2 * threshold - 0)
         return max(0.0, min(1.0, ratio))
 
     def get_all_proficiencies(self) -> dict[str, float]:
@@ -61,8 +67,8 @@ class LearningProgress(GObject.Object):
         return len(self.order) - 1
 
     def _on_language_change(self, obj, _pspec):
-        self.current_index = self._compute_current_index()
         self.order = LEARNING_ORDER[app_settings.string_language]
+        self.current_index = self._compute_current_index()
         self.emit("progress-changed")
 
     def _on_desired_wpm_change(self, obj, _pspec):

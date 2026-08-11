@@ -34,8 +34,8 @@ class TypingController(Gtk.Box):
         )
 
         self.char_stats = CharStats()
-        self.string_generator = StringGenerator(self.char_stats)
         self.learning_progress = LearningProgress(self.char_stats)
+        self.string_generator = StringGenerator(self.learning_progress, self.char_stats)
 
         self.stats_bar = StatsBar(self.learning_progress, self.char_stats)
         self.append(self.stats_bar)
