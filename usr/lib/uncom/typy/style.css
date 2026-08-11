@@ -66,3 +66,18 @@ progressbar.goal-reached progress {
 
 .diff-up { color: #4caf50; font-size: 11px; }
 .diff-down { color: #e53935; font-size: 11px; }
+
+.learning-char {
+    padding: 4px;
+    border: 1px black solid;
+    border-right: none;
+}
+
+.learning-char:last-child{
+    border: 1px black solid;
+}
+
+.learning-char-text {
+    color: white;
+    font-weight: bold;
+}

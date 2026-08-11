@@ -7,6 +7,7 @@ from stats_bar import StatsBar
 from typing_area import TypingArea
 from string_generator import StringGenerator
 from app_settings import get_app_settings
+from learning_progress import LearningProgress
 
 app_settings = get_app_settings()
 
@@ -16,18 +17,27 @@ class TypingController(Gtk.Box):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=32, **kwargs)
 
         app_settings.connect(
-            "notify::string-length", lambda *a: self._start_new_string()
+            "notify::string-length",
+            lambda *a: self._start_new_string(),
         )
         app_settings.connect(
-            "notify::string-language", lambda *a: self._start_new_string()
+            "notify::string-language",
+            lambda *a: self._start_new_string(),
         )
-
-        app_settings.connect("notify::typing-mode", lambda *a: self._start_new_string())
+        app_settings.connect(
+            "notify::typing-mode",
+            lambda *a: self._start_new_string(),
+        )
+        app_settings.connect(
+            "notify::desired-wpm",
+            lambda *a: self._start_new_string(),
+        )
 
         self.char_stats = CharStats()
         self.string_generator = StringGenerator(self.char_stats)
+        self.learning_progress = LearningProgress(self.char_stats)
 
-        self.stats_bar = StatsBar()
+        self.stats_bar = StatsBar(self.learning_progress, self.char_stats)
         self.append(self.stats_bar)
 
         self._string_to_type = self.string_generator.generate()
@@ -94,8 +104,12 @@ class TypingController(Gtk.Box):
             self._string_to_type_pointer += 1
 
             if self._string_to_type_pointer == current_string_length:
-                if app_settings.typing_mode != "learning":
-                    self.stats_bar.update_performance_stats(current_string_length)
+                if app_settings.typing_mode == "learning":
+                    self.learning_progress.check_progress()
+                    self.stats_bar.update_learning_stats()
+                else:
+                    self.stats_bar.update_stats(current_string_length)
+
                 self.stats_bar.update_daily_goal(now - self._string_time_start)
                 self.char_stats.save_data()
                 self._start_new_string()
