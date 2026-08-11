@@ -61,6 +61,7 @@ class StatsBar(Gtk.Box):
         self.update_learning_stats()
 
     def update_learning_stats(self):
+
         curr_learning_char = self.learning_progress.get_current_learning_char()
         self.learning_progress_ui.update(
             curr_learning_char,
@@ -70,7 +71,7 @@ class StatsBar(Gtk.Box):
         )
         self.current_key_stats_ui.update(
             curr_learning_char,
-            self.char_stats.peek_stat(curr_learning_char),
+            self.char_stats.peek_stat(curr_learning_char.lower()),
         )
 
     def reset_daily_progress(self):
@@ -101,7 +102,7 @@ class StatsBar(Gtk.Box):
         self.current_key_stats_ui = CurrentKeyStatsUI()
         self.current_key_stats_ui.update(
             curr_learning_char,
-            self.char_stats.peek_stat(curr_learning_char),
+            self.char_stats.peek_stat(curr_learning_char.lower()),
         )
         self.current_key_stats_ui.set_visible(typing_mode == "learning")
         self.append(self.current_key_stats_ui)
