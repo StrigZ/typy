@@ -95,7 +95,7 @@ class TypingController(Gtk.Box):
 
         self.stats_bar.performance_stats.record_keystroke(is_correct)
         self.char_stats.update_stat(
-            curr_char, elapsed, is_correct, skip_timing=self._is_first_keystroke
+            curr_char.lower(), elapsed, is_correct, skip_timing=self._is_first_keystroke
         )
 
         self._is_first_keystroke = False
