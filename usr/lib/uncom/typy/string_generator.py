@@ -88,6 +88,10 @@ class StringGenerator:
     def _generate_filtered_word_string(self, eligible: list[str]) -> str:
         current = self.learning_progress.get_current_learning_char_lower()
         all_words = word_list.get_words()
+        if not all_words:
+            return self._generate_synthetic_string(
+                self.learning_progress.get_active_chars_lower()
+            )
         filtered = filter_locked_chars(all_words, eligible)
         filtered = [(w, f) for w, f in filtered if current in w]
         if not filtered:

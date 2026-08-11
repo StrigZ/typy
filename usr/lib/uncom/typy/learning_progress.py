@@ -82,7 +82,8 @@ class LearningProgress(GObject.Object, JsonPersisted):
         )
 
     def _threshold_seconds(self) -> float:
-        return 60 / (app_settings.desired_wpm * 5)
+        wpm = max(1, app_settings.desired_wpm)
+        return 60 / (wpm * 5)
 
     def _on_language_change(self, obj, _pspec):
         self.order = LEARNING_ORDER[app_settings.string_language]
