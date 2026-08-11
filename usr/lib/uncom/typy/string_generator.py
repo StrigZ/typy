@@ -10,7 +10,7 @@ MISS_WEIGHT = 2
 SLOW_WEIGHT = 1
 
 SYNTHETIC_UNLOCK_THRESHOLD = (
-    5  # below this many unlocked chars, generate synthetic words
+    6  # below this many unlocked chars, generate synthetic words
 )
 
 app_settings = get_app_settings()
@@ -51,34 +51,49 @@ class StringGenerator:
         return " ".join(words)
 
     def _generate_learning_string(self) -> str:
-        active = self.learning_progress.get_active_chars_lower()
+        active = self._get_eligible_chars()
         if len(active) < SYNTHETIC_UNLOCK_THRESHOLD:
             return self._generate_synthetic_string(active)
         return self._generate_filtered_word_string(active)
 
-    def _generate_synthetic_string(self, active: list[str]) -> str:
-        current = self.learning_progress.get_current_learning_char().lower()
-        others = [c for c in active if c != current]
+    def _get_eligible_chars(self) -> list[str]:
+        active = self.learning_progress.get_active_chars_lower()
+        current = self.learning_progress.get_current_learning_char_lower()
+        needs_improvement = {
+            c.lower() for c in self.learning_progress.get_needs_improvement()
+        }
+        return [c for c in active if c == current or c not in needs_improvement]
+
+    def _generate_synthetic_string(self, eligible: list[str]) -> str:
+        current = self.learning_progress.get_current_learning_char_lower()
+        core = [c.lower() for c in self.learning_progress.order[:3]]
+        others = [c for c in eligible if c != current and c not in core]
+
         words = []
         total_length = 0
         while total_length < app_settings.string_length:
-            word_len = random.randint(2, 5)
-            # build word from other active chars, then insert current at a random position
-            base = random.choices(others, k=word_len - 1) if others else []
-            insert_at = random.randint(0, len(base))
-            base.insert(insert_at, current)
-            word = "".join(base)
+            word_len = max(3, random.randint(2, 5))
+            required = list(set(core + [current]))
+            extra_count = max(0, word_len - len(required))
+            extra = (
+                random.choices(others or eligible, k=extra_count) if extra_count else []
+            )
+
+            chars = required + extra
+            random.shuffle(chars)
+            word = "".join(chars)
             words.append(word)
             total_length += len(word) + 1
+
         return " ".join(words)
 
-    def _generate_filtered_word_string(self, active: list[str]) -> str:
-        current = self.learning_progress.get_current_learning_char().lower()
+    def _generate_filtered_word_string(self, eligible: list[str]) -> str:
+        current = self.learning_progress.get_current_learning_char_lower()
         all_words = word_list.get_words()
-        filtered = filter_locked_chars(all_words, active)
+        filtered = filter_locked_chars(all_words, eligible)
         filtered = [(w, f) for w, f in filtered if current in w]
         if not filtered:
-            return self._generate_synthetic_string(active)
+            return self._generate_synthetic_string(eligible)
         weights = [self._get_word_weight(w, freq) for w, freq in filtered]
         words = []
         total_length = 0
