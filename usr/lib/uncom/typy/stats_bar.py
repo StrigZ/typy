@@ -61,11 +61,13 @@ class StatsBar(Gtk.Box):
         self.update_learning_stats()
 
     def update_learning_stats(self):
+        curr_learning_char = self.learning_progress.get_current_learning_char()
         self.learning_progress_ui.update(
+            curr_learning_char,
             self.learning_progress.get_active_chars(),
+            self.learning_progress.get_needs_improvement(),
             self.learning_progress.get_all_proficiencies(),
         )
-        curr_learning_char = self.learning_progress.get_current_learning_char()
         self.current_key_stats_ui.update(
             curr_learning_char,
             self.char_stats.peek_stat(curr_learning_char),
@@ -110,7 +112,9 @@ class StatsBar(Gtk.Box):
 
         self.learning_progress_ui = LearningProgressUI()
         self.learning_progress_ui.update(
+            curr_learning_char,
             self.learning_progress.get_active_chars(),
+            self.learning_progress.get_needs_improvement(),
             self.learning_progress.get_all_proficiencies(),
         )
         self.learning_progress_ui.set_visible(typing_mode == "learning")
