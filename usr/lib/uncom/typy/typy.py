@@ -26,19 +26,9 @@ def parse_args():
 
 
 def main():
-    args = parse_args()
-
-    if args.option_a:
-        print("Option A is given")
-    elif args.option_b:
-        print("Option B is given")
-
-    if args.gui:
-        sys.argv = [sys.argv[0]]
-        app = Application()
-        sys.exit(app.run(sys.argv))
-    else:
-        print("This application does nothing...")
+    sys.argv = [sys.argv[0]]
+    app = Application()
+    sys.exit(app.run(sys.argv))
 
 
 if __name__ == "__main__":
