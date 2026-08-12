@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2026-08-12 03:00+0300\n"
+"POT-Creation-Date: 2026-08-12 03:20+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 
 #: usr/lib/uncom/typy/current_key_stats_ui.py:42
 msgid "Current key"
-msgstr ""
+msgstr "Буква"
 
 #: usr/lib/uncom/typy/current_key_stats_ui.py:47
 #: usr/lib/uncom/typy/performance_stats_ui.py:59
@@ -28,6 +28,10 @@ msgstr "Скорость"
 #: usr/lib/uncom/typy/performance_stats_ui.py:70
 msgid "Accuracy"
 msgstr "Точность"
+
+#: usr/lib/uncom/typy/daily_goal_ui.py:20
+msgid "min"
+msgstr "мин"
 
 #: usr/lib/uncom/typy/daily_goal_ui.py:56
 #: usr/lib/uncom/typy/settings_dialog.py:80
@@ -59,24 +63,20 @@ msgid "Danger zone"
 msgstr "ОПАСНО"
 
 #: usr/lib/uncom/typy/settings_dialog.py:58
-#, fuzzy
 msgid "Reset char stats"
-msgstr "Сбросить статистику"
+msgstr "Сбросить статистику символов"
 
 #: usr/lib/uncom/typy/settings_dialog.py:63
-#, fuzzy
 msgid "Reset today stats"
-msgstr "Сбросить статистику"
+msgstr "Сбросить статистику за сегодня"
 
 #: usr/lib/uncom/typy/settings_dialog.py:68
-#, fuzzy
 msgid "Reset today progress"
-msgstr "Сбрость прогресс за сегодня"
+msgstr "Сбрость цель за сегодня"
 
 #: usr/lib/uncom/typy/settings_dialog.py:73
-#, fuzzy
 msgid "Reset all time stats"
-msgstr "Сбросить статистику"
+msgstr "Сбросить статистику за все время"
 
 #: usr/lib/uncom/typy/settings_dialog.py:83
 msgid "Minutes per day"
@@ -115,25 +115,22 @@ msgid "All time"
 msgstr "Все время"
 
 #: usr/lib/uncom/typy/stats_dialog.py:84
-#, fuzzy
 msgid "Best speed"
-msgstr "Средняя скорость"
+msgstr "Лучшая скорость"
 
 #: usr/lib/uncom/typy/stats_dialog.py:85
 msgid "Average speed"
 msgstr "Средняя скорость"
 
 #: usr/lib/uncom/typy/stats_dialog.py:86
-#, fuzzy
 msgid "Average accuracy"
-msgstr "Средняя Точность"
+msgstr "Средняя точность"
 
 #: usr/lib/uncom/typy/stats_dialog.py:87
 msgid "Characters typed"
-msgstr "Символов"
+msgstr "Символов напечатано"
 
 #: usr/lib/uncom/typy/stats_dialog.py:88
-#, fuzzy
 msgid "Strings completed"
 msgstr "Строк завершено"
 
