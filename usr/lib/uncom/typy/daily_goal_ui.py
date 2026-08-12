@@ -17,7 +17,7 @@ class DailyGoalUI(Gtk.Box):
     def update(self, goal_in_minutes: int, progress_in_fractions: float):
         is_reached = progress_in_fractions >= 1.0
 
-        self.goal_label.set_text(f"{goal_in_minutes}min")
+        self.goal_label.set_text(f"{goal_in_minutes}{_('min')}")
         self.progress_label.set_text(f"{round(progress_in_fractions * 100)}%/")
 
         self.progress_bar.set_fraction(min(progress_in_fractions, 1.0))
