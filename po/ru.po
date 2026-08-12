@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2026-08-07 00:22+0300\n"
+"POT-Creation-Date: 2026-08-12 03:00+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,66 +15,92 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 
-#: usr/lib/uncom/typy/daily_goal_ui.py:56
-#: usr/lib/uncom/typy/settings_dialog.py:61
-msgid "Daily goal"
-msgstr "Ежедневная цель"
+#: usr/lib/uncom/typy/current_key_stats_ui.py:42
+msgid "Current key"
+msgstr ""
 
+#: usr/lib/uncom/typy/current_key_stats_ui.py:47
 #: usr/lib/uncom/typy/performance_stats_ui.py:59
 msgid "Speed"
 msgstr "Скорость"
+
+#: usr/lib/uncom/typy/current_key_stats_ui.py:54
+#: usr/lib/uncom/typy/performance_stats_ui.py:70
+msgid "Accuracy"
+msgstr "Точность"
+
+#: usr/lib/uncom/typy/daily_goal_ui.py:56
+#: usr/lib/uncom/typy/settings_dialog.py:80
+msgid "Daily goal"
+msgstr "Ежедневная цель"
 
 #: usr/lib/uncom/typy/performance_stats_ui.py:61
 msgid "NEW BEST!"
 msgstr "НОВЫЙ РЕКОРД!"
 
-#: usr/lib/uncom/typy/performance_stats_ui.py:70
-msgid "Accuracy"
-msgstr "Точность"
+#: usr/lib/uncom/typy/settings_dialog.py:17
+msgid "Freeform"
+msgstr "Свободный"
 
-#: usr/lib/uncom/typy/settings_dialog.py:29
+#: usr/lib/uncom/typy/settings_dialog.py:18
+msgid "Adaptive"
+msgstr "Адаптивный"
+
+#: usr/lib/uncom/typy/settings_dialog.py:19
+msgid "Learning"
+msgstr "Учебный"
+
+#: usr/lib/uncom/typy/settings_dialog.py:48
 msgid "Reset"
 msgstr "Сбросить"
 
-#: usr/lib/uncom/typy/settings_dialog.py:36
+#: usr/lib/uncom/typy/settings_dialog.py:55
 msgid "Danger zone"
 msgstr "ОПАСНО"
 
-#: usr/lib/uncom/typy/settings_dialog.py:39
+#: usr/lib/uncom/typy/settings_dialog.py:58
 #, fuzzy
 msgid "Reset char stats"
 msgstr "Сбросить статистику"
 
-#: usr/lib/uncom/typy/settings_dialog.py:44
+#: usr/lib/uncom/typy/settings_dialog.py:63
 #, fuzzy
 msgid "Reset today stats"
 msgstr "Сбросить статистику"
 
-#: usr/lib/uncom/typy/settings_dialog.py:49
+#: usr/lib/uncom/typy/settings_dialog.py:68
 #, fuzzy
 msgid "Reset today progress"
 msgstr "Сбрость прогресс за сегодня"
 
-#: usr/lib/uncom/typy/settings_dialog.py:54
+#: usr/lib/uncom/typy/settings_dialog.py:73
 #, fuzzy
 msgid "Reset all time stats"
 msgstr "Сбросить статистику"
 
-#: usr/lib/uncom/typy/settings_dialog.py:64
+#: usr/lib/uncom/typy/settings_dialog.py:83
 msgid "Minutes per day"
 msgstr "Минут в день"
 
-#: usr/lib/uncom/typy/settings_dialog.py:77
+#: usr/lib/uncom/typy/settings_dialog.py:96
 msgid "Typing"
 msgstr "Набор текста"
 
-#: usr/lib/uncom/typy/settings_dialog.py:80
+#: usr/lib/uncom/typy/settings_dialog.py:102
 msgid "String length"
 msgstr "Длина строки"
 
-#: usr/lib/uncom/typy/settings_dialog.py:103
+#: usr/lib/uncom/typy/settings_dialog.py:115
 msgid "Language"
 msgstr "Язык"
+
+#: usr/lib/uncom/typy/settings_dialog.py:128
+msgid "Mode"
+msgstr "Режим"
+
+#: usr/lib/uncom/typy/settings_dialog.py:142
+msgid "Desired WPM"
+msgstr "Желаемый WPM"
 
 #: usr/lib/uncom/typy/stats_dialog.py:15 usr/lib/uncom/typy/window.py:45
 msgid "Stats"
@@ -89,19 +115,24 @@ msgid "All time"
 msgstr "Все время"
 
 #: usr/lib/uncom/typy/stats_dialog.py:84
-msgid "Average speed"
+#, fuzzy
+msgid "Best speed"
 msgstr "Средняя скорость"
 
 #: usr/lib/uncom/typy/stats_dialog.py:85
+msgid "Average speed"
+msgstr "Средняя скорость"
+
+#: usr/lib/uncom/typy/stats_dialog.py:86
 #, fuzzy
 msgid "Average accuracy"
 msgstr "Средняя Точность"
 
-#: usr/lib/uncom/typy/stats_dialog.py:86
+#: usr/lib/uncom/typy/stats_dialog.py:87
 msgid "Characters typed"
 msgstr "Символов"
 
-#: usr/lib/uncom/typy/stats_dialog.py:87
+#: usr/lib/uncom/typy/stats_dialog.py:88
 #, fuzzy
 msgid "Strings completed"
 msgstr "Строк завершено"
