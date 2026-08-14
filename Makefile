@@ -19,13 +19,6 @@ dev:
 build:
 	debuild -b -uc -us
 
-install:
-	sudo dpkg -r typy || true
-	sudo dpkg -i ../typy_*.deb
-
-reinstall: build install
-	typy
-
 words:
 	python3 tools/convert_words.py
 
