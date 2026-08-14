@@ -1,3 +1,18 @@
+# СБорка
+```
+make build
+```
+
+или 
+
+```
+debuild -b -uc -us
+```
+# Запуск
+``` 
+typy
+```
+
 # deb-python-gtk4-template
 
 ## Начало работы
