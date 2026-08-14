@@ -1,9 +1,7 @@
-from gi.repository import Adw, Gtk, GLib
-
-from constants import _
-
-from typing_controller import TypingController
 from app_settings import get_app_settings
+from constants import _
+from gi.repository import Adw, GLib, Gtk
+from typing_controller import TypingController
 
 app_settings = get_app_settings()
 
@@ -54,8 +52,13 @@ class SettingsDialog(Adw.PreferencesDialog):
         stats_bar = self._typing_controller.stats_bar
         group = Adw.PreferencesGroup(title=_("Danger zone"))
 
+        def on_char_stat_reset():
+            self._typing_controller.char_stats.reset_data()
+            self._typing_controller.learning_progress.reset()
+            self._typing_controller.stats_bar.update_learning_stats()
+
         reset_char_stats_row = build_reset_row(
-            _("Reset char stats"), self._typing_controller.char_stats.reset_data
+            _("Reset char stats"), on_char_stat_reset
         )
         group.add(reset_char_stats_row)
 

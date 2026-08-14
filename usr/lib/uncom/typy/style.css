@@ -47,8 +47,8 @@ progressbar.goal-reached progress {
 }
 
 @keyframes flame-pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.65; }
+    0%, 100% { opacity: 1; };
+    50% { opacity: 0.65; };
 }
 
 .new-best {

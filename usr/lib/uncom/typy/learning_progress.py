@@ -1,8 +1,10 @@
-from gi.repository import GObject
+import os
+
 from app_settings import get_app_settings
 from constants import LEARNING_MIN_SAMPLES, LEARNING_ORDER, USER_DATA_DIR
+from gi.repository import GObject
 from json_persisted import JsonPersisted
-import os
+from utility import delete_file_if_exists
 
 app_settings = get_app_settings()
 
@@ -105,3 +107,7 @@ class LearningProgress(GObject.Object, JsonPersisted):
 
     def _save(self):
         self._save_raw(self.path, {"current_index": self.current_index})
+
+    def reset(self):
+        self.current_index = min(2, len(self.order) - 1)
+        delete_file_if_exists(self.path)
