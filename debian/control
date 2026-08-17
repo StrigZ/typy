@@ -1,5 +1,5 @@
 Source: typy
-Section: admin
+Section: misc
 Build-Depends: debhelper-compat (= 12),
                debhelper (>= 7),
                python3 (>= 3.3)
@@ -11,7 +11,7 @@ Package: typy
 Architecture: all
 Depends: python3 (>= 3.3),
          desktop-file-utils,
-         gir1.2-adw-1 (>= 1.5),
+         gir1.2-adw-1 (>= 1.4),
          gir1.2-gtk-4.0,
          ${misc:Depends}
 Description: typy.
