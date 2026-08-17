@@ -16,3 +16,4 @@ __pycache__/
 usr/share/locale/
 
 tools/raw/
+venv/
