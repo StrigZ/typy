@@ -11,7 +11,8 @@ Package: typy
 Architecture: all
 Depends: python3 (>= 3.3),
          desktop-file-utils,
+         gir1.2-adw-1 (>= 1.5),
+         gir1.2-gtk-4.0,
          ${misc:Depends}
-Description: Uncom OS App Template.
- A simple GTK4 application template with console launch support.
- Provides a starting point for building GTK4 apps under Uncom OS.
+Description: typy.
+ A simple GTK4 application for practicing touch-typing.
