@@ -22,8 +22,8 @@ class CurrentKeyStatsUI(Gtk.Box):
             )
             self.accuracy_value_label.set_label(f"{get_accuracy(char_stat):0.1f}%")
         else:
-            self.wpm_value_label.set_label("Gathering data…")
-            self.accuracy_value_label.set_label("Gathering data…")
+            self.wpm_value_label.set_label(_("Gathering data…"))
+            self.accuracy_value_label.set_label(_("Gathering data…"))
 
     def _build_ui(self):
         def build_stat_box(title_label_text: str, value_label: Gtk.Label):
