@@ -51,56 +51,55 @@ class StringGenerator:
         return " ".join(words)
 
     def _generate_learning_string(self) -> str:
-        active = self._get_eligible_chars()
-        if len(active) < SYNTHETIC_UNLOCK_THRESHOLD:
-            return self._generate_synthetic_string(active)
+        active = self.learning_progress.get_active_chars_lower()
+        # if len(active) < SYNTHETIC_UNLOCK_THRESHOLD:
+        #     return self._generate_synthetic_string(active)
         return self._generate_filtered_word_string(active)
 
-    def _get_eligible_chars(self) -> list[str]:
-        active = self.learning_progress.get_active_chars_lower()
-        current = self.learning_progress.get_current_learning_char_lower()
-        needs_improvement = {
-            c.lower() for c in self.learning_progress.get_needs_improvement()
-        }
-        return [c for c in active if c == current or c not in needs_improvement]
+    # def _generate_synthetic_string(self, eligible: list[str]) -> str:
+    #     current = self.learning_progress.get_current_learning_char_lower()
+    #     others = [c for c in eligible if c != current]
 
-    def _generate_synthetic_string(self, eligible: list[str]) -> str:
-        current = self.learning_progress.get_current_learning_char_lower()
-        others = [c for c in eligible if c != current]
+    #     words = []
+    #     total_length = 0
+    #     while total_length < app_settings.string_length:
+    #         word_len = max(3, random.randint(2, 5))
+    #         extra_count = max(0, word_len - 1)  # -1 for the forced `current`
+    #         extra = (
+    #             random.choices(others or eligible, k=extra_count) if extra_count else []
+    #         )
 
-        words = []
-        total_length = 0
-        while total_length < app_settings.string_length:
-            word_len = max(3, random.randint(2, 5))
-            extra_count = max(0, word_len - 1)  # -1 for the forced `current`
-            extra = (
-                random.choices(others or eligible, k=extra_count) if extra_count else []
-            )
+    #         chars = [current] + extra
+    #         random.shuffle(chars)
+    #         word = "".join(chars)
+    #         words.append(word)
+    #         total_length += len(word) + 1
 
-            chars = [current] + extra
-            random.shuffle(chars)
-            word = "".join(chars)
-            words.append(word)
-            total_length += len(word) + 1
-
-        return " ".join(words)
+    #     return " ".join(words)
 
     def _generate_filtered_word_string(self, eligible: list[str]) -> str:
         current = self.learning_progress.get_current_learning_char_lower()
         all_words = word_list.get_words()
-        if not all_words:
-            return self._generate_synthetic_string(
-                self.learning_progress.get_active_chars_lower()
-            )
+
         filtered = filter_locked_chars(all_words, eligible)
-        filtered = [(w, f) for w, f in filtered if current in w]
-        if not filtered:
-            return self._generate_synthetic_string(eligible)
-        weights = [self._get_word_weight(w, freq) for w, freq in filtered]
+        containing_current = [(w, f) for w, f in filtered if current in w]
+
+        if containing_current:
+            pool = containing_current
+        elif filtered:
+            pool = filtered
+        else:
+            active = self.learning_progress.get_active_chars_lower()
+            pool = filter_locked_chars(all_words, active)
+
+        if not pool:
+            return current * 5  # minimal typable fallback, not ideal but never crashes
+
+        weights = [self._get_word_weight(w, freq) for w, freq in pool]
         words = []
         total_length = 0
         while total_length < app_settings.string_length:
-            word, _freq = random.choices(filtered, weights=weights, k=1)[0]
+            word, _freq = random.choices(pool, weights=weights, k=1)[0]
             added = len(word) + (1 if words else 0)
             if total_length + added > app_settings.string_length and words:
                 break
