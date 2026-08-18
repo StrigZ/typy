@@ -8,7 +8,7 @@ MAX_CHARS = 100
 LANGUAGE = "en"
 DAILY_GOAL_IN_MINUTES = 15
 TYPING_MODE = "freeform"  # freeform, adaptive, learning
-DESIRED_WPM = 40
+DESIRED_WPM = 30
 
 
 class AppSettings(GObject.Object, JsonPersisted):
