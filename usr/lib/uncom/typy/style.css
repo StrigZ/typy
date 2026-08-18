@@ -35,7 +35,7 @@ progressbar.goal-reached progress {
 }
 
 .streak-flame {
-    color: var(--text-muted, #b4b2a9);
+    color: #b4b2a9;
     font-size: 15px;
     filter: grayscale(100%);
 }
@@ -47,8 +47,18 @@ progressbar.goal-reached progress {
 }
 
 @keyframes flame-pulse {
-    0%, 100% { opacity: 1; };
-    50% { opacity: 0.65; };
+
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.65;
+    }
 }
 
 .new-best {
@@ -64,8 +74,15 @@ progressbar.goal-reached progress {
     opacity: 1;
 }
 
-.diff-up { color: #4caf50; font-size: 11px; }
-.diff-down { color: #e53935; font-size: 11px; }
+.diff-up {
+    color: #4caf50;
+    font-size: 11px;
+}
+
+.diff-down {
+    color: #e53935;
+    font-size: 11px;
+}
 
 .learning-char {
     padding: 4px;
@@ -73,7 +90,7 @@ progressbar.goal-reached progress {
     border-right: none;
 }
 
-.learning-char:last-child{
+.learning-char:last-child {
     border: 1px black solid;
 }
 
