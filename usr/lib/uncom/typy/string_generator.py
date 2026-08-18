@@ -2,9 +2,9 @@ import math
 import random
 
 from app_settings import get_app_settings
-from word_list import get_word_list
 from char_stats import CharStats
 from learning_progress import LearningProgress
+from word_list import get_word_list
 
 MISS_WEIGHT = 2
 SLOW_WEIGHT = 1

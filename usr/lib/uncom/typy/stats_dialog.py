@@ -1,14 +1,14 @@
-from gi.repository import Adw, Gtk
-from daily_stats import DailyStats
-from performance_stats import PerformanceStats
 from constants import _
+from daily_stats import DailyStats
+from gi.repository import Adw, Gtk
+from performance_stats import PerformanceStats
 
 
-class StatsDialog(Adw.Dialog):
+class StatsDialog(Gtk.Dialog):
     def __init__(
         self, daily_stats: DailyStats, performance_stats: PerformanceStats, **kwargs
     ):
-        super().__init__(can_close=True, title="Stats", **kwargs)
+        super().__init__(title="Stats", **kwargs)
         self.daily_stats = daily_stats
         self.performans_stats = performance_stats
 
@@ -103,6 +103,10 @@ class StatsDialog(Adw.Dialog):
         return Adw.Clamp(child=stats_box, margin_top=12)
 
 
-def show_stats(parent_window, daily_stats, performance_stats):
-    dialog = StatsDialog(daily_stats, performance_stats)
-    dialog.present(parent_window)
+def show_stats(
+    parent_window: Gtk.ApplicationWindow,
+    daily_stats: DailyStats,
+    performance_stats: PerformanceStats,
+):
+    dialog = StatsDialog(daily_stats, performance_stats, transient_for=parent_window)
+    dialog.present()

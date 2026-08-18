@@ -1,11 +1,10 @@
 import os
 from typing import TypedDict
 
-from constants import USER_DATA_DIR
-from utility import delete_file_if_exists
-
 from app_settings import get_app_settings
+from constants import USER_DATA_DIR
 from json_persisted import JsonPersisted
+from utility import delete_file_if_exists
 
 app_settings = get_app_settings()
 

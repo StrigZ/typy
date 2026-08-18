@@ -1,9 +1,9 @@
 from dataclasses import dataclass
+from datetime import date, timedelta
+
 from app_settings import get_app_settings
 from constants import DAILY_GOAL_FILE
-from datetime import date, timedelta
 from json_persisted import JsonPersisted
-
 
 app_settings = get_app_settings()
 

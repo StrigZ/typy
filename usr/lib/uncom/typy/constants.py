@@ -2,7 +2,6 @@ import gettext
 import os
 
 from gi.repository import GLib
-
 from utility import load_word_list
 
 TEXT_DOMAIN = "typy"
@@ -28,7 +27,7 @@ else:
 WORD_LIST = load_word_list(os.path.join(WORDS_DIR, "words_en.csv"))
 
 # Learning
-LEARNING_MIN_SAMPLES = 25
+LEARNING_MIN_SAMPLES = 15
 LEARNING_ORDER = {
     "en": "ETAOINSRHDLUCMFYWGPBVKXJQZ",
     "ru": "ОЕАИНТСРВЛКМДПУЯЫЬГЗБЧЙХЖШЮЦЩЭФЪЁ",

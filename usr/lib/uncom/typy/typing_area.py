@@ -1,6 +1,5 @@
-from gi.repository import GLib, Gtk
-
 from constants import _
+from gi.repository import GLib, Gtk
 
 
 class TypingArea(Gtk.Overlay):

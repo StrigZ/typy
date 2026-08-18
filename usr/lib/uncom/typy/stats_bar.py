@@ -1,15 +1,14 @@
-from gi.repository import Gtk
-
-from performance_stats_ui import PerformanceStatsUI
-from performance_stats import PerformanceStats
-from daily_stats import DailyStats
-from daily_goal_ui import DailyGoalUI
-from daily_goal import DailyGoal
 from app_settings import get_app_settings
-from learning_progress_ui import LearningProgressUI
-from learning_progress import LearningProgress
-from current_key_stats_ui import CurrentKeyStatsUI
 from char_stats import CharStats
+from current_key_stats_ui import CurrentKeyStatsUI
+from daily_goal import DailyGoal
+from daily_goal_ui import DailyGoalUI
+from daily_stats import DailyStats
+from gi.repository import Gtk
+from learning_progress import LearningProgress
+from learning_progress_ui import LearningProgressUI
+from performance_stats import PerformanceStats
+from performance_stats_ui import PerformanceStatsUI
 
 app_settings = get_app_settings()
 

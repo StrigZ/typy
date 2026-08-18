@@ -1,6 +1,5 @@
-from gi.repository import Gtk, GLib
-
 from constants import _
+from gi.repository import GLib, Gtk
 from performance_stats import StringResult
 
 

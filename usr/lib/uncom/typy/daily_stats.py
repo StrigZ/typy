@@ -1,11 +1,10 @@
 import os
+from dataclasses import dataclass
 from datetime import date
 
-from constants import USER_DATA_DIR
-from dataclasses import dataclass
 from app_settings import get_app_settings
+from constants import USER_DATA_DIR
 from json_persisted import JsonPersisted
-
 
 app_settings = get_app_settings()
 

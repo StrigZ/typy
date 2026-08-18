@@ -1,6 +1,6 @@
-from gi.repository import Gtk
-from constants import _, CURRENT_KEY_DISPLAY_MIN_SAMPLES
 from char_stats import CharStat
+from constants import CURRENT_KEY_DISPLAY_MIN_SAMPLES, _
+from gi.repository import Gtk
 
 
 class CurrentKeyStatsUI(Gtk.Box):

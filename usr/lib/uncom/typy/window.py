@@ -1,10 +1,8 @@
+from constants import STYLE_CSS, _
 from gi.repository import Gdk, Gtk
-
-from constants import _, STYLE_CSS
-from typing_controller import TypingController
-
 from settings_dialog import show_settings
 from stats_dialog import show_stats
+from typing_controller import TypingController
 
 
 class WindowMain(Gtk.ApplicationWindow):

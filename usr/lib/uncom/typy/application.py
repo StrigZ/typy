@@ -1,6 +1,4 @@
 from gi.repository import Adw, GLib
-
-from constants import _
 from window import WindowMain
 
 

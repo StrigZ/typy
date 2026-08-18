@@ -1,13 +1,12 @@
 import time
 
-from gi.repository import Gdk, Gtk
-
-from char_stats import CharStats
-from stats_bar import StatsBar
-from typing_area import TypingArea
-from string_generator import StringGenerator
 from app_settings import get_app_settings
+from char_stats import CharStats
+from gi.repository import Gdk, Gtk
 from learning_progress import LearningProgress
+from stats_bar import StatsBar
+from string_generator import StringGenerator
+from typing_area import TypingArea
 
 app_settings = get_app_settings()
 
@@ -161,3 +160,9 @@ class TypingController(Gtk.Box):
     def deactivate(self):
         self.typing_area.blur()
         self._reset_string_progress()
+
+    def on_char_stat_reset(self):
+        self.char_stats.reset_data()
+        self.learning_progress.reset()
+        self.stats_bar.update_learning_stats()
+        self._start_new_string()

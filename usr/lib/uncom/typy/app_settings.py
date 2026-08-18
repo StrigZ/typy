@@ -1,7 +1,7 @@
 from constants import APP_SETTINGS_FILE
 from gi.repository import GObject
-
 from json_persisted import JsonPersisted
+
 # DEFAULTS
 
 MAX_CHARS = 100

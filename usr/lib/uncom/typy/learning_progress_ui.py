@@ -1,6 +1,6 @@
+from app_settings import get_app_settings
 from gi.repository import Gtk
 from learning_progress import LEARNING_ORDER
-from app_settings import get_app_settings
 
 app_settings = get_app_settings()
 
@@ -52,7 +52,7 @@ class LearningProgressUI(Gtk.Box):
                     """
                 else:
                     css = f".learning-char {{ background-color: {color}; {border} }}"
-            self._providers[char].load_from_data(css.encode())
+            self._providers[char].load_from_data(css, -1)
 
     def _proficiency_color(self, proficiency: float) -> str:
         # proficiency: 0.0 (worst/red) to 1.0 (best/green)

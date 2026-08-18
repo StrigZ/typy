@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2026-08-12 03:26+0300\n"
+"POT-Creation-Date: 2026-08-18 03:36+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,12 +20,12 @@ msgid "Current key"
 msgstr ""
 
 #: usr/lib/uncom/typy/current_key_stats_ui.py:47
-#: usr/lib/uncom/typy/performance_stats_ui.py:59
+#: usr/lib/uncom/typy/performance_stats_ui.py:58
 msgid "Speed"
 msgstr ""
 
 #: usr/lib/uncom/typy/current_key_stats_ui.py:54
-#: usr/lib/uncom/typy/performance_stats_ui.py:70
+#: usr/lib/uncom/typy/performance_stats_ui.py:69
 msgid "Accuracy"
 msgstr ""
 
@@ -34,75 +34,75 @@ msgid "min"
 msgstr ""
 
 #: usr/lib/uncom/typy/daily_goal_ui.py:56
-#: usr/lib/uncom/typy/settings_dialog.py:80
+#: usr/lib/uncom/typy/settings_dialog.py:79
 msgid "Daily goal"
 msgstr ""
 
-#: usr/lib/uncom/typy/performance_stats_ui.py:61
+#: usr/lib/uncom/typy/performance_stats_ui.py:60
 msgid "NEW BEST!"
 msgstr ""
 
-#: usr/lib/uncom/typy/settings_dialog.py:17
+#: usr/lib/uncom/typy/settings_dialog.py:15
 msgid "Freeform"
 msgstr ""
 
-#: usr/lib/uncom/typy/settings_dialog.py:18
+#: usr/lib/uncom/typy/settings_dialog.py:16
 msgid "Adaptive"
 msgstr ""
 
-#: usr/lib/uncom/typy/settings_dialog.py:19
+#: usr/lib/uncom/typy/settings_dialog.py:17
 msgid "Learning"
 msgstr ""
 
-#: usr/lib/uncom/typy/settings_dialog.py:48
+#: usr/lib/uncom/typy/settings_dialog.py:47
 msgid "Reset"
 msgstr ""
 
-#: usr/lib/uncom/typy/settings_dialog.py:55
+#: usr/lib/uncom/typy/settings_dialog.py:54
 msgid "Danger zone"
 msgstr ""
 
-#: usr/lib/uncom/typy/settings_dialog.py:58
+#: usr/lib/uncom/typy/settings_dialog.py:57
 msgid "Reset char stats"
 msgstr ""
 
-#: usr/lib/uncom/typy/settings_dialog.py:63
+#: usr/lib/uncom/typy/settings_dialog.py:62
 msgid "Reset today stats"
 msgstr ""
 
-#: usr/lib/uncom/typy/settings_dialog.py:68
+#: usr/lib/uncom/typy/settings_dialog.py:67
 msgid "Reset today progress"
 msgstr ""
 
-#: usr/lib/uncom/typy/settings_dialog.py:73
+#: usr/lib/uncom/typy/settings_dialog.py:72
 msgid "Reset all time stats"
 msgstr ""
 
-#: usr/lib/uncom/typy/settings_dialog.py:83
+#: usr/lib/uncom/typy/settings_dialog.py:82
 msgid "Minutes per day"
 msgstr ""
 
-#: usr/lib/uncom/typy/settings_dialog.py:96
+#: usr/lib/uncom/typy/settings_dialog.py:95
 msgid "Typing"
 msgstr ""
 
-#: usr/lib/uncom/typy/settings_dialog.py:102
+#: usr/lib/uncom/typy/settings_dialog.py:101
 msgid "String length"
 msgstr ""
 
-#: usr/lib/uncom/typy/settings_dialog.py:115
+#: usr/lib/uncom/typy/settings_dialog.py:114
 msgid "Language"
 msgstr ""
 
-#: usr/lib/uncom/typy/settings_dialog.py:128
+#: usr/lib/uncom/typy/settings_dialog.py:127
 msgid "Mode"
 msgstr ""
 
-#: usr/lib/uncom/typy/settings_dialog.py:142
+#: usr/lib/uncom/typy/settings_dialog.py:141
 msgid "Desired WPM"
 msgstr ""
 
-#: usr/lib/uncom/typy/stats_dialog.py:15 usr/lib/uncom/typy/window.py:45
+#: usr/lib/uncom/typy/stats_dialog.py:15 usr/lib/uncom/typy/window.py:43
 msgid "Stats"
 msgstr ""
 
@@ -134,7 +134,7 @@ msgstr ""
 msgid "Strings completed"
 msgstr ""
 
-#: usr/lib/uncom/typy/typing_area.py:56
+#: usr/lib/uncom/typy/typing_area.py:55
 msgid "Click or press Enter to start typing"
 msgstr ""
 

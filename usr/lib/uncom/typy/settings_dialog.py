@@ -19,7 +19,7 @@ typing_mode_name_to_code = {
 typing_mode_code_to_name = {v: k for k, v in typing_mode_name_to_code.items()}
 
 
-class SettingsDialog(Adw.PreferencesDialog):
+class SettingsDialog(Adw.PreferencesWindow):
     def __init__(self, typing_controller: TypingController, **kwargs):
         super().__init__(**kwargs)
         self._typing_controller = typing_controller
@@ -27,7 +27,7 @@ class SettingsDialog(Adw.PreferencesDialog):
         # apply slider values,
         # if settings window closes
         self._pending_flushes = []
-        self.connect("closed", lambda *a: self._flush_all())
+        self.connect("close-request", lambda *a: self._flush_all())
 
         page = Adw.PreferencesPage()
         self.add(page)
@@ -39,6 +39,7 @@ class SettingsDialog(Adw.PreferencesDialog):
     def _flush_all(self):
         for flush in self._pending_flushes:
             flush()
+        return False
 
     def _build_reset_group(self) -> Adw.PreferencesGroup:
         def build_reset_row(title: str, callback):
@@ -52,13 +53,8 @@ class SettingsDialog(Adw.PreferencesDialog):
         stats_bar = self._typing_controller.stats_bar
         group = Adw.PreferencesGroup(title=_("Danger zone"))
 
-        def on_char_stat_reset():
-            self._typing_controller.char_stats.reset_data()
-            self._typing_controller.learning_progress.reset()
-            self._typing_controller.stats_bar.update_learning_stats()
-
         reset_char_stats_row = build_reset_row(
-            _("Reset char stats"), on_char_stat_reset
+            _("Reset char stats"), self._typing_controller.on_char_stat_reset
         )
         group.add(reset_char_stats_row)
 
@@ -223,9 +219,9 @@ class SettingsDialog(Adw.PreferencesDialog):
     def create_dropdown_row(self, options, selected_value, title):
         options_list = Gtk.StringList(strings=options)
 
-        selected_index = options_list.find(selected_value)
-
-        if selected_index == Gtk.INVALID_LIST_POSITION:
+        try:
+            selected_index = options.index(selected_value)
+        except ValueError:
             selected_index = 0
 
         return Adw.ComboRow(
@@ -236,5 +232,5 @@ class SettingsDialog(Adw.PreferencesDialog):
 
 
 def show_settings(parent_window, typing_controller):
-    dialog = SettingsDialog(typing_controller)
-    dialog.present(parent_window)
+    dialog = SettingsDialog(typing_controller, transient_for=parent_window)
+    dialog.present()

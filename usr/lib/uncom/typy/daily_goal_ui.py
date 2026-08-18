@@ -1,5 +1,5 @@
-from gi.repository import Gtk
 from constants import _
+from gi.repository import Gtk
 
 
 class DailyGoalUI(Gtk.Box):

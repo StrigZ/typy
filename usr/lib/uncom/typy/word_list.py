@@ -1,8 +1,8 @@
 import os
-from utility import load_word_list
-from constants import APP_DIR
 
 from app_settings import get_app_settings
+from constants import APP_DIR
+from utility import load_word_list
 
 app_settings = get_app_settings()
 
