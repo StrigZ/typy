@@ -1,4 +1,5 @@
 import time
+from string import ascii_lowercase
 
 from app_settings import get_app_settings
 from char_stats import CharStats
@@ -68,15 +69,42 @@ class TypingController(Gtk.Box):
 
     def _on_key_pressed(self, controller, keyval, keycode, state):
         current_string_length = len(self._string_to_type)
-
+        # index out range guard
         if self._string_to_type_pointer >= current_string_length:
             return True
 
-        unicode_val = Gdk.keyval_to_unicode(keyval)
+        unicode_val: int = Gdk.keyval_to_unicode(keyval)
+
+        # Not unicode value like F keys - ignored
         if not unicode_val:
             return True
 
+        # Backspace pressed and this is not the first ch in string
+        if self._string_to_type_pointer > 0 and keyval == Gdk.KEY_BackSpace:
+            # check if prev ch is incorrect
+            # if not, ignore
+            prev_char_index = self._string_to_type_pointer - 1
+            if prev_char_index not in self._missed_keys_indices:
+                return True
+
+            # go back by one index
+            self._string_to_type_pointer -= 1
+            # remove index from missed indices set
+            self._missed_keys_indices.remove(self._string_to_type_pointer)
+            # update ui
+            self._render()
+            return True
+
+        char = chr(unicode_val)
+
+        # Something that is not abc or space - ignored
+        if char not in f"{ascii_lowercase} ":
+            return True
+
         now = time.monotonic()
+
+        # start tracking time only from the second keystroke
+        # first one is ignored
         if self._is_first_keystroke:
             self.stats_bar.performance_stats.string_start_time = now
             self._string_time_start = now
@@ -86,7 +114,6 @@ class TypingController(Gtk.Box):
 
         self._key_time_start = now
 
-        char = chr(unicode_val)
         self.typing_area.key_display_label.set_text(char)
 
         curr_char = self._string_to_type[self._string_to_type_pointer]
