@@ -7,7 +7,7 @@ from typing_controller import TypingController
 
 class WindowMain(Gtk.ApplicationWindow):
     def __init__(self, **kargs):
-        super().__init__(**kargs, title="typy")
+        super().__init__(**kargs, title="Typy")
         self.set_resizable(True)
         self.set_default_size(700, 300)
         self.set_size_request(600, 300)

@@ -51,9 +51,7 @@ class PerformanceStatsUI(Gtk.Box):
         label.set_markup(markup)
 
     def _build_ui(self):
-        self.wpm_value_label = Gtk.Label(
-            label="0wpm",
-        )
+        self.wpm_value_label = Gtk.Label(label="0wpm", css_classes=["caption"])
         wpm_box = self._build_stat_box(
             title_label_text=_("Speed"), value_label=self.wpm_value_label
         )
@@ -62,9 +60,7 @@ class PerformanceStatsUI(Gtk.Box):
         wpm_box.append(self.new_best_label)
         self.append(wpm_box)
 
-        self.accuracy_value_label = Gtk.Label(
-            label="0%",
-        )
+        self.accuracy_value_label = Gtk.Label(label="0%", css_classes=["caption"])
         accuracy_box = self._build_stat_box(
             title_label_text=_("Accuracy"), value_label=self.accuracy_value_label
         )
@@ -76,7 +72,7 @@ class PerformanceStatsUI(Gtk.Box):
             spacing=8,
             halign=Gtk.Align.CENTER,
         )
-        title_label = Gtk.Label(label=title_label_text, css_classes=["dim-label"])
+        title_label = Gtk.Label(label=title_label_text, css_classes=["caption-heading"])
 
         box.append(title_label)
         box.append(value_label)

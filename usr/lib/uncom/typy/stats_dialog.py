@@ -69,7 +69,9 @@ class StatsDialog(Gtk.Dialog):
             value_label.set_width_chars(10)
             value_label.set_justify(Gtk.Justification.CENTER)
 
-            title_label = Gtk.Label(label=title, css_classes=["dim-label", "caption"])
+            title_label = Gtk.Label(
+                label=title, css_classes=["dim-label", "caption-heading"]
+            )
             stat_box.append(title_label)
             stat_box.append(value_label)
 

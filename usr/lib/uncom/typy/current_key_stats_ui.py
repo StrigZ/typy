@@ -32,24 +32,26 @@ class CurrentKeyStatsUI(Gtk.Box):
                 spacing=8,
                 halign=Gtk.Align.CENTER,
             )
-            title_label = Gtk.Label(label=title_label_text, css_classes=["dim-label"])
+            title_label = Gtk.Label(
+                label=title_label_text, css_classes=["caption-heading"]
+            )
 
             box.append(title_label)
             box.append(value_label)
             return box
 
-        self.current_key_label = Gtk.Label()
+        self.current_key_label = Gtk.Label(css_classes=["caption"])
         current_key_box = build_stat_box(_("Current key"), self.current_key_label)
         self.append(current_key_box)
 
-        self.wpm_value_label = Gtk.Label()
+        self.wpm_value_label = Gtk.Label(css_classes=["caption"])
         wpm_box = build_stat_box(
             title_label_text=_("Speed"), value_label=self.wpm_value_label
         )
 
         self.append(wpm_box)
 
-        self.accuracy_value_label = Gtk.Label()
+        self.accuracy_value_label = Gtk.Label(css_classes=["caption"])
         accuracy_box = build_stat_box(
             title_label_text=_("Accuracy"), value_label=self.accuracy_value_label
         )

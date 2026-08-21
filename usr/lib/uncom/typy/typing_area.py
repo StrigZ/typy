@@ -55,6 +55,6 @@ class TypingArea(Gtk.Overlay):
             label=_("Click or press Enter to start typing"),
             halign=Gtk.Align.CENTER,
             valign=Gtk.Align.CENTER,
-            css_classes=["dim-label"],
+            css_classes=["dim-label", "caption"],
         )
         self.add_overlay(self.hint_label)

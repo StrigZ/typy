@@ -52,7 +52,7 @@ class DailyGoalUI(Gtk.Box):
         streak_box.append(self.streak_count_label)
         self.append(streak_box)
 
-        title_label = Gtk.Label()
+        title_label = Gtk.Label(css_classes=["caption-heading"])
         title_label.set_text(_("Daily goal"))
         self.append(title_label)
 
@@ -67,10 +67,12 @@ class DailyGoalUI(Gtk.Box):
         progress_box = Gtk.Box(css_classes=["dim-label"])
         content_box.append(progress_box)
 
-        self.progress_label = Gtk.Label(valign=Gtk.Align.CENTER)
+        self.progress_label = Gtk.Label(
+            valign=Gtk.Align.CENTER, css_classes=["caption"]
+        )
         progress_box.append(self.progress_label)
 
-        self.goal_label = Gtk.Label(valign=Gtk.Align.CENTER)
+        self.goal_label = Gtk.Label(valign=Gtk.Align.CENTER, css_classes=["caption"])
         progress_box.append(self.goal_label)
 
         self.progress_bar = Gtk.ProgressBar(
