@@ -119,7 +119,7 @@ class StringGenerator:
 
 def filter_locked_chars(words: list[tuple[str, int]], unlocked_chars: list[str]):
     def filter_fn(entry: tuple[str, int]):
-        word, freq = entry
+        word, _freq = entry
         for c in word:
             if c not in unlocked_chars:
                 return False
