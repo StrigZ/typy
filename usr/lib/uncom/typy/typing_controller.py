@@ -67,40 +67,28 @@ class TypingController(Gtk.Box):
         self.typing_area.blur()
         self._reset_string_progress()
 
-    def _on_key_pressed(self, controller, keyval, keycode, state):
+    def process_backspace(self):
+        # go back by one index
+        self._string_to_type_pointer -= 1
+        # remove index from missed indices set
+        self._missed_keys_indices.remove(self._string_to_type_pointer)
+        # update ui
+
+    def complete_string(self, now):
         current_string_length = len(self._string_to_type)
-        # index out range guard
-        if self._string_to_type_pointer >= current_string_length:
-            return True
 
-        unicode_val: int = Gdk.keyval_to_unicode(keyval)
+        if app_settings.typing_mode == "learning":
+            self.learning_progress.check_progress()
+            self.stats_bar.update_learning_stats()
+        else:
+            self.stats_bar.update_stats(current_string_length)
 
-        # Not unicode value like F keys - ignored
-        if not unicode_val:
-            return True
+            self.stats_bar.update_daily_goal(now - self._string_time_start)
+            self.char_stats.save_data()
+            self._start_new_string()
 
-        # Backspace pressed and this is not the first ch in string
-        if self._string_to_type_pointer > 0 and keyval == Gdk.KEY_BackSpace:
-            # check if prev ch is incorrect
-            # if not, ignore
-            prev_char_index = self._string_to_type_pointer - 1
-            if prev_char_index not in self._missed_keys_indices:
-                return True
-
-            # go back by one index
-            self._string_to_type_pointer -= 1
-            # remove index from missed indices set
-            self._missed_keys_indices.remove(self._string_to_type_pointer)
-            # update ui
-            self._render()
-            return True
-
-        char = chr(unicode_val)
-
-        # Something that is not abc or space - ignored
-        if char not in f"{ascii_lowercase} ":
-            return True
-
+    def process_char(self, char: str):
+        current_string_length = len(self._string_to_type)
         now = time.monotonic()
 
         # start tracking time only from the second keystroke
@@ -130,17 +118,41 @@ class TypingController(Gtk.Box):
             self._string_to_type_pointer += 1
 
             if self._string_to_type_pointer == current_string_length:
-                if app_settings.typing_mode == "learning":
-                    self.learning_progress.check_progress()
-                    self.stats_bar.update_learning_stats()
-                else:
-                    self.stats_bar.update_stats(current_string_length)
-
-                self.stats_bar.update_daily_goal(now - self._string_time_start)
-                self.char_stats.save_data()
-                self._start_new_string()
+                self.complete_string(now)
         else:
             self._missed_keys_indices.add(self._string_to_type_pointer)
+
+    def _on_key_pressed(self, controller, keyval, keycode, state):
+        current_string_length = len(self._string_to_type)
+        # index out range guard
+        if self._string_to_type_pointer >= current_string_length:
+            return True
+
+        unicode_val: int = Gdk.keyval_to_unicode(keyval)
+
+        # Not unicode value like F keys - ignored
+        if not unicode_val:
+            return True
+
+        # Backspace pressed and this is not the first ch in string
+        if self._string_to_type_pointer > 0 and keyval == Gdk.KEY_BackSpace:
+            # check if prev ch is incorrect
+            # if not, ignore
+            prev_char_index = self._string_to_type_pointer - 1
+            if prev_char_index not in self._missed_keys_indices:
+                return True
+
+            self.process_backspace()
+            self._render()
+            return True
+
+        char = chr(unicode_val)
+
+        # Something that is not abc or space - ignored
+        if char.lower() not in f"{ascii_lowercase} ":
+            return True
+
+        self.process_char(char)
 
         self._render()
         return True
