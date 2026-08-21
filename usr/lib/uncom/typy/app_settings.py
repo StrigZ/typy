@@ -9,6 +9,7 @@ LANGUAGE = "en"
 DAILY_GOAL_IN_MINUTES = 15
 TYPING_MODE = "freeform"  # freeform, adaptive, learning
 DESIRED_WPM = 30
+ENABLE_BACKSPACE = True
 
 
 class AppSettings(GObject.Object, JsonPersisted):
@@ -17,6 +18,7 @@ class AppSettings(GObject.Object, JsonPersisted):
     daily_goal = GObject.Property(type=int, default=DAILY_GOAL_IN_MINUTES)
     typing_mode = GObject.Property(type=str, default=TYPING_MODE)
     desired_wpm = GObject.Property(type=int, default=DESIRED_WPM)
+    enable_backspace = GObject.Property(type=bool, default=ENABLE_BACKSPACE)
 
     def __init__(self):
         super().__init__()

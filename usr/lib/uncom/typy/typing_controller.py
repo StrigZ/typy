@@ -135,7 +135,11 @@ class TypingController(Gtk.Box):
             return True
 
         # Backspace pressed and this is not the first ch in string
-        if self._string_to_type_pointer > 0 and keyval == Gdk.KEY_BackSpace:
+        if (
+            app_settings.enable_backspace
+            and self._string_to_type_pointer > 0
+            and keyval == Gdk.KEY_BackSpace
+        ):
             # check if prev ch is incorrect
             # if not, ignore
             prev_char_index = self._string_to_type_pointer - 1

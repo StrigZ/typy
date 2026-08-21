@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2026-08-18 04:14+0300\n"
+"POT-Creation-Date: 2026-08-21 19:08+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -107,39 +107,43 @@ msgstr ""
 msgid "Desired WPM"
 msgstr ""
 
-#: usr/lib/uncom/typy/stats_dialog.py:15 usr/lib/uncom/typy/window.py:43
-msgid "Stats"
+#: usr/lib/uncom/typy/settings_dialog.py:163
+msgid "Enable Backspace"
 msgstr ""
 
-#: usr/lib/uncom/typy/stats_dialog.py:38
+#: usr/lib/uncom/typy/stats_dialog.py:42
 msgid "Today"
 msgstr ""
 
-#: usr/lib/uncom/typy/stats_dialog.py:39
+#: usr/lib/uncom/typy/stats_dialog.py:43
 msgid "All time"
 msgstr ""
 
-#: usr/lib/uncom/typy/stats_dialog.py:84
+#: usr/lib/uncom/typy/stats_dialog.py:88
 msgid "Best speed"
 msgstr ""
 
-#: usr/lib/uncom/typy/stats_dialog.py:85
+#: usr/lib/uncom/typy/stats_dialog.py:89
 msgid "Average speed"
 msgstr ""
 
-#: usr/lib/uncom/typy/stats_dialog.py:86
+#: usr/lib/uncom/typy/stats_dialog.py:90
 msgid "Average accuracy"
 msgstr ""
 
-#: usr/lib/uncom/typy/stats_dialog.py:87
+#: usr/lib/uncom/typy/stats_dialog.py:91
 msgid "Characters typed"
 msgstr ""
 
-#: usr/lib/uncom/typy/stats_dialog.py:88
+#: usr/lib/uncom/typy/stats_dialog.py:92
 msgid "Strings completed"
 msgstr ""
 
 #: usr/lib/uncom/typy/typing_area.py:55
 msgid "Click or press Enter to start typing"
+msgstr ""
+
+#: usr/lib/uncom/typy/window.py:43
+msgid "Stats"
 msgstr ""
 

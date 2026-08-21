@@ -156,6 +156,14 @@ class SettingsDialog(Adw.PreferencesWindow):
 
         group.add(desired_wpm_slider_row)
 
+        def on_enable_backspace_change(new_value):
+            app_settings.enable_backspace = new_value
+
+        enable_backspace_row = self.create_checkbox_row(
+            _("Enable Backspace"), on_enable_backspace_change
+        )
+        group.add(enable_backspace_row)
+
         return group
 
     def create_slider_row(
@@ -229,6 +237,14 @@ class SettingsDialog(Adw.PreferencesWindow):
             title=title,
             selected=selected_index,
         )
+
+    def create_checkbox_row(self, title, on_toggle):
+        row = Adw.ActionRow(title=title, hexpand=True)
+        checkbox = Gtk.CheckButton(css_classes=["selection-mode"])
+        checkbox.connect("toggled", lambda checkbox: on_toggle(checkbox.get_active()))
+        row.add_suffix(checkbox)
+
+        return row
 
 
 def show_settings(parent_window, typing_controller):
