@@ -12,12 +12,16 @@ class StatsDialog(Gtk.Dialog):
         self.daily_stats = daily_stats
         self.performans_stats = performance_stats
 
-        header_bar = Adw.HeaderBar(title_widget=Adw.WindowTitle(title=_("Stats")))
+        # header_bar = Adw.HeaderBar(
+        #     title_widget=Adw.WindowTitle(title=_("Stats")),
+        # )
         content_box = Gtk.Box(
             orientation=Gtk.Orientation.VERTICAL,
             spacing=4,
             margin_start=24,
             margin_end=24,
+            margin_bottom=24,
+            margin_top=24,
         )
 
         stack = Gtk.Stack()
@@ -30,7 +34,7 @@ class StatsDialog(Gtk.Dialog):
         toolbar_view = Adw.ToolbarView(
             content=content_box, top_bar_style=Adw.ToolbarStyle.FLAT
         )
-        toolbar_view.add_top_bar(header_bar)
+        # toolbar_view.add_top_bar(header_bar)
         self.set_child(toolbar_view)
 
         self._build_ui()
