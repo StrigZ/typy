@@ -8,7 +8,7 @@ mo:
 	mkdir -p usr/share/locale/ru/LC_MESSAGES
 	msgfmt po/ru.po -o usr/share/locale/ru/LC_MESSAGES/typy.mo
 
-dev: mo
+dev:
 	find usr/lib/uncom/typy \( -name "*.py" -o -name "*.css" \) | entr -r python3 usr/lib/uncom/typy/typy.py
 
 run:
